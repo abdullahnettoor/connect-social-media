@@ -30,7 +30,7 @@ func CreateToken(secretKey, role string, expireAfter time.Duration, claim interf
 	// Retrieving token string
 	tokenString, err = token.SignedString([]byte(secretKey))
 	if err != nil {
-		fmt.Println("Error occured while creating token:", err)
+		fmt.Println("Error occurred while creating token:", err)
 		return "", err
 	}
 
@@ -47,11 +47,11 @@ func IsValidToken(secretKey, tokenString string) (bool, interface{}) {
 
 	// Check if token is valid
 	if err != nil || !token.Valid {
-		fmt.Println("Error occured while parsing token:", err)
+		fmt.Println("Error occurred while parsing token:", err)
 		return false, nil
 	}
 
-	// Assign parsed data from token to calims
+	// Assign parsed data from token to claims
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 
 		// Check if token is expired
@@ -63,7 +63,7 @@ func IsValidToken(secretKey, tokenString string) (bool, interface{}) {
 		return true, claims
 
 	} else {
-		fmt.Println("Error occured while decoding token:", err)
+		fmt.Println("Error occurred while decoding token:", err)
 		return false, nil
 	}
 }

@@ -23,11 +23,11 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 		return nil, err
 	}
 	userRepository := repo.NewUserRepository(driverWithContext)
-	userUsecase := usecase.NewUserUsecase(userRepository)
-	userHandler := handlers.NewUserHandler(userUsecase)
+	userUseCase := usecase.NewUserUseCase(userRepository)
+	userHandler := handlers.NewUserHandler(userUseCase)
 	adminRepository := repo.NewAdminRepository(driverWithContext)
-	adminUsecase := usecase.NewAdminUsecase(adminRepository, userRepository)
-	adminHandler := handlers.NewAdminHandler(adminUsecase)
+	adminUseCase := usecase.NewAdminUseCase(adminRepository, userRepository)
+	adminHandler := handlers.NewAdminHandler(adminUseCase)
 	serveHttp := server.NewServeHttp(userHandler, adminHandler)
 	return serveHttp, nil
 }

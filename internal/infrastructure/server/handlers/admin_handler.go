@@ -10,10 +10,10 @@ import (
 )
 
 type AdminHandler struct {
-	uc *usecase.AdminUsecase
+	uc *usecase.AdminUseCase
 }
 
-func NewAdminHandler(uc *usecase.AdminUsecase) *AdminHandler {
+func NewAdminHandler(uc *usecase.AdminUseCase) *AdminHandler {
 	return &AdminHandler{uc: uc}
 }
 

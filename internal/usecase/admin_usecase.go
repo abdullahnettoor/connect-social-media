@@ -13,16 +13,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-type AdminUsecase struct {
+type AdminUseCase struct {
 	repo     *repo.AdminRepository
 	userRepo *repo.UserRepository
 }
 
-func NewAdminUsecase(repo *repo.AdminRepository, userRepo *repo.UserRepository) *AdminUsecase {
-	return &AdminUsecase{repo, userRepo}
+func NewAdminUseCase(repo *repo.AdminRepository, userRepo *repo.UserRepository) *AdminUseCase {
+	return &AdminUseCase{repo, userRepo}
 }
 
-func (uc *AdminUsecase) Login(ctx context.Context, req *req.AdminLoginReq) (*res.AdminLoginRes, error) {
+func (uc *AdminUseCase) Login(ctx context.Context, req *req.AdminLoginReq) (*res.AdminLoginRes, error) {
 	admin, err := uc.repo.FindAdminByEmail(ctx, req.Email)
 
 	switch {
@@ -39,10 +39,10 @@ func (uc *AdminUsecase) Login(ctx context.Context, req *req.AdminLoginReq) (*res
 
 	admin.Password = ""
 
-	return &res.AdminLoginRes{Code: http.StatusOK, Message: "User logged in succesfully", Token: token, Admin: *admin}, nil
+	return &res.AdminLoginRes{Code: http.StatusOK, Message: "User logged in successfully", Token: token, Admin: *admin}, nil
 }
 
-func (uc *AdminUsecase) GetUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
+func (uc *AdminUseCase) GetUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
 	user, err := uc.userRepo.FindUserByUserId(ctx, req.UserID)
 	if err != nil {
 		return &res.CommonRes{Code: http.StatusInternalServerError, Message: "failed to generate token", Error: err}, err
@@ -51,7 +51,7 @@ func (uc *AdminUsecase) GetUser(ctx context.Context, req *req.UserId) (*res.Comm
 	return &res.CommonRes{Code: 200, Result: user}, nil
 }
 
-func (uc *AdminUsecase) BlockUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
+func (uc *AdminUseCase) BlockUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
 	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, "BLOCKED")
 	if err != nil {
 		return &res.CommonRes{Code: http.StatusInternalServerError, Message: "failed to generate token", Error: err}, err
@@ -60,7 +60,7 @@ func (uc *AdminUsecase) BlockUser(ctx context.Context, req *req.UserId) (*res.Co
 	return &res.CommonRes{Code: 200, Result: user}, nil
 }
 
-func (uc *AdminUsecase) UnblockUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
+func (uc *AdminUseCase) UnblockUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
 	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, "ACTIVE")
 	if err != nil {
 		return &res.CommonRes{Code: http.StatusInternalServerError, Message: "failed to generate token", Error: err}, err

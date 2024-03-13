@@ -16,32 +16,32 @@ import (
 	"github.com/spf13/viper"
 )
 
-type UserUsecase struct {
+type UserUseCase struct {
 	repo *repo.UserRepository
 }
 
-func NewUserUsecase(repo *repo.UserRepository) *UserUsecase {
-	return &UserUsecase{repo}
+func NewUserUseCase(repo *repo.UserRepository) *UserUseCase {
+	return &UserUseCase{repo}
 }
 
-func (uc *UserUsecase) SignUp(ctx context.Context, req *req.SignUpReq) (*entity.User, error) {
+func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) (*entity.User, error) {
 	hashed, err := helper.HashPassword(req.Password)
 	if err != nil {
-		log.Println("Error Occured while hashing password")
+		log.Println("Error Occurred while hashing password")
 		return nil, err
 	}
 
 	user := &entity.User{FullName: req.FullName, Username: req.Username, Email: req.Email, Password: hashed}
 	user, err = uc.repo.CreateUser(ctx, user)
 	if err != nil {
-		log.Println("Error Occured while creating user")
+		log.Println("Error Occurred while creating user")
 		return nil, err
 	}
 	return user, nil
 
 }
 
-func (uc *UserUsecase) Login(ctx context.Context, req *req.LoginReq) (*res.LoginRes, error) {
+func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) (*res.LoginRes, error) {
 	user, err := uc.repo.FindUserByUsername(ctx, req.Username)
 
 	switch {
@@ -62,5 +62,5 @@ func (uc *UserUsecase) Login(ctx context.Context, req *req.LoginReq) (*res.Login
 
 	user.Password = ""
 
-	return &res.LoginRes{Code: http.StatusOK, Message: "User logged in succesfully", Token: token, User: *user}, nil
+	return &res.LoginRes{Code: http.StatusOK, Message: "User logged in successfully", Token: token, User: *user}, nil
 }
