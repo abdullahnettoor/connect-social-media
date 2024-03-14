@@ -28,7 +28,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 	user.Status = "PENDING"
 	params, err := conv.StructToMap(user)
 	if err != nil {
-		log.Println("Error occured while parsing struct to map:", err)
+		log.Println("Error occurred while parsing struct to map:", err)
 		return nil, err
 	}
 	fmt.Println("Params is", params)
@@ -39,7 +39,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 
 	result, err := session.Run(ctx, cypher, params)
 	if err != nil {
-		log.Println("Error occured while Executing cypher:", err)
+		log.Println("Error occurred while Executing cypher:", err)
 		return nil, err
 	}
 	if result.Peek(ctx) {
@@ -66,19 +66,19 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 
 	result, err = session.Run(ctx, cypher, params)
 	if err != nil {
-		log.Println("Error occured while Executing cypher:", err)
+		log.Println("Error occurred while Executing cypher:", err)
 		return nil, err
 	}
 
 	record, err := result.Single(ctx)
 	if err != nil {
-		log.Println("Error occured while retreving new user:", err)
+		log.Println("Error occurred while retrieving new user:", err)
 		return nil, err
 	}
 
 	var newUser = &entity.User{}
 	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, newUser); err != nil {
-		log.Println("Error occured while converting userMap to user:", err)
+		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
 	newUser.ID = record.Values[0].(dbtype.Node).GetId()
@@ -94,7 +94,7 @@ func (r *UserRepository) FindUserByUsername(ctx context.Context, username string
 
 	result, err := session.Run(ctx, cypher, map[string]any{"username": username})
 	if err != nil {
-		log.Println("Error occured while Executing cypher:", err)
+		log.Println("Error occurred while Executing cypher:", err)
 		return nil, err
 	}
 	if !result.Peek(ctx) {
@@ -104,7 +104,7 @@ func (r *UserRepository) FindUserByUsername(ctx context.Context, username string
 	record := result.Record()
 	var user = &entity.User{}
 	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, user); err != nil {
-		log.Println("Error occured while converting userMap to user:", err)
+		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
 	user.ID = record.Values[0].(dbtype.Node).GetId()
@@ -120,7 +120,7 @@ func (r *UserRepository) FindUserByUserId(ctx context.Context, id int64) (*entit
 
 	result, err := session.Run(ctx, cypher, map[string]any{"id": id})
 	if err != nil {
-		log.Println("Error occured while Executing cypher:", err)
+		log.Println("Error occurred while Executing cypher:", err)
 		return nil, err
 	}
 	if !result.Peek(ctx) {
@@ -130,7 +130,7 @@ func (r *UserRepository) FindUserByUserId(ctx context.Context, id int64) (*entit
 	record := result.Record()
 	var user = &entity.User{}
 	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, user); err != nil {
-		log.Println("Error occured while converting userMap to user:", err)
+		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
 	user.ID = record.Values[0].(dbtype.Node).GetId()
@@ -146,7 +146,7 @@ func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status 
 
 	result, err := session.Run(ctx, cypher, map[string]any{"id": id, "status": status})
 	if err != nil {
-		log.Println("Error occured while Executing cypher:", err)
+		log.Println("Error occurred while Executing cypher:", err)
 		return nil, err
 	}
 	if !result.Peek(ctx) {
@@ -156,12 +156,10 @@ func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status 
 	record := result.Record()
 	var user = &entity.User{}
 	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, user); err != nil {
-		log.Println("Error occured while converting userMap to user:", err)
+		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
 	user.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return user, nil
 }
-
-// Gaurav Sen

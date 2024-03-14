@@ -36,7 +36,7 @@ func (h *UserHandler) SignUp(ctx *gin.Context) {
 
 	ctx.JSON(200, res.CommonRes{
 		Code:    200,
-		Message: "Succesfully created user",
+		Message: "Successfully created user",
 		Result:  user,
 	})
 }

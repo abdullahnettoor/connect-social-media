@@ -7,7 +7,7 @@ import (
 )
 
 func SetupAdminRoutes(engine *gin.Engine, adminHandler *handlers.AdminHandler) {
-	engine.POST("/adminlogin", adminHandler.Login)
+	engine.POST("/adminLogin", adminHandler.Login)
 	admin := engine.Group("/admin")
 	admin.Use(middlewares.AuthenticateAdmin)
 	admin.PATCH("/users/block", adminHandler.BlockUser)

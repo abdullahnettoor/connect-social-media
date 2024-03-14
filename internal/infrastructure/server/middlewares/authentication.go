@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Authourize admin
+// Authorize admin
 func AuthenticateAdmin(ctx *gin.Context) {
 	fmt.Println("MW: Authorizing Admin")
 
@@ -31,6 +31,6 @@ func AuthenticateAdmin(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println("MW: Admin Authorised")
+	fmt.Println("MW: Admin Authorized")
 	ctx.Next()
 }

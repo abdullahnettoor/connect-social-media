@@ -6,6 +6,6 @@ import (
 )
 
 func SetupUserRoutes(engine *gin.Engine, userHandler *handlers.UserHandler) {
-	engine.POST("/signup", userHandler.SignUp)
+	engine.POST("/signUp", userHandler.SignUp)
 	engine.POST("/login", userHandler.Login)
 }

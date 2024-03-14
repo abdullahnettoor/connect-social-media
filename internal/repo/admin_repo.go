@@ -6,6 +6,7 @@ import (
 
 	"github.com/abdullahnettoor/connect-social-media/internal/domain/entity"
 	e "github.com/abdullahnettoor/connect-social-media/internal/domain/error"
+	"github.com/abdullahnettoor/connect-social-media/pkg/conv"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
 )
@@ -32,17 +33,14 @@ func (r *AdminRepository) FindAdminByEmail(ctx context.Context, email string) (*
 	if !result.Peek(ctx) {
 		return nil, e.ErrAdminNotFound
 	}
-
-	// transformer := neo4j.EagerResultTransformer()
-	// err = transformer.Accept(result.Record())
-	// rr, err := transformer.Complete(result.Record().Keys,)
-
+	
 	record := result.Record()
-	admin := &entity.Admin{
-		ID:       record.Values[0].(dbtype.Node).GetId(),
-		Password: record.Values[0].(dbtype.Node).Props["password"].(string),
-		Email:    record.Values[0].(dbtype.Node).Props["email"].(string),
+	var admin = &entity.Admin{}
+	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, admin); err != nil {		
+		log.Println("Error occurred while converting userMap to admin:", err)
+		return nil, err
 	}
+	admin.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return admin, nil
 }
