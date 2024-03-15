@@ -33,10 +33,10 @@ func (r *AdminRepository) FindAdminByEmail(ctx context.Context, email string) (*
 	if !result.Peek(ctx) {
 		return nil, e.ErrAdminNotFound
 	}
-	
+
 	record := result.Record()
 	var admin = &entity.Admin{}
-	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, admin); err != nil {		
+	if err := conv.MapToStruct(record.Values[0].(dbtype.Node).Props, admin); err != nil {
 		log.Println("Error occurred while converting userMap to admin:", err)
 		return nil, err
 	}

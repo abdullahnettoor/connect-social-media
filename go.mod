@@ -9,6 +9,7 @@ require (
 	github.com/neo4j/neo4j-go-driver/v5 v5.18.0
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.21.0
+	gopkg.in/mail.v2 v2.3.1
 )
 
 require (
@@ -48,6 +49,7 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

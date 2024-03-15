@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -12,7 +12,7 @@ import (
 
 // Authorize admin
 func AuthenticateAdmin(ctx *gin.Context) {
-	fmt.Println("MW: Authorizing Admin")
+	log.Println("MW: Authorizing Admin")
 
 	tokenString := strings.TrimPrefix(ctx.GetHeader("Authorization"), "Bearer ")
 
@@ -31,6 +31,33 @@ func AuthenticateAdmin(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println("MW: Admin Authorized")
+	log.Println("MW: Admin Authorized")
+	ctx.Next()
+}
+
+// Authorize admin
+func AuthenticateUser(ctx *gin.Context) {
+	log.Println("MW: Authorizing Admin")
+
+	tokenString := strings.TrimPrefix(ctx.GetHeader("Authorization"), "Bearer ")
+
+	var secretKey = viper.GetString("JWT_SECRET")
+
+	isValid, claims := jwttoken.IsValidToken(secretKey, tokenString)
+	if !isValid {
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	user := claims.(*jwttoken.CustomClaims).Model.(map[string]any)
+	role := claims.(*jwttoken.CustomClaims).Role
+	if role != "user" {
+		ctx.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	ctx.Set("user", user)
+
+	log.Println("MW: User Authorized")
 	ctx.Next()
 }

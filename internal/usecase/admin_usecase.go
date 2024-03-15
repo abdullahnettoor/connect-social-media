@@ -52,7 +52,7 @@ func (uc *AdminUseCase) GetUser(ctx context.Context, req *req.UserId) (*res.Comm
 }
 
 func (uc *AdminUseCase) BlockUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
-	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, "BLOCKED")
+	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, "BLOCKED", time.Now().Format(time.RFC3339))
 	if err != nil {
 		return &res.CommonRes{Code: http.StatusInternalServerError, Message: "failed to generate token", Error: err}, err
 	}
@@ -61,7 +61,7 @@ func (uc *AdminUseCase) BlockUser(ctx context.Context, req *req.UserId) (*res.Co
 }
 
 func (uc *AdminUseCase) UnblockUser(ctx context.Context, req *req.UserId) (*res.CommonRes, error) {
-	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, "ACTIVE")
+	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, "ACTIVE", time.Now().Format(time.RFC3339))
 	if err != nil {
 		return &res.CommonRes{Code: http.StatusInternalServerError, Message: "failed to generate token", Error: err}, err
 	}

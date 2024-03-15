@@ -20,40 +20,45 @@ func NewUserHandler(uc *usecase.UserUseCase) *UserHandler {
 func (h *UserHandler) SignUp(ctx *gin.Context) {
 	var req req.SignUpReq
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, map[string]any{
-			"status": "failed to parse req",
-			"error":  err.Error(),
-		})
-		return
-	}
-	user, err := h.uc.SignUp(ctx, &req)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, res.CommonRes{
-			Code: http.StatusInternalServerError, Error: err.Error(), Message: "Failed to create user",
-		})
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{Code: http.StatusBadRequest, Error: err.Error(), Message: "Failed to parse request"})
 		return
 	}
 
-	ctx.JSON(200, res.CommonRes{
-		Code:    200,
-		Message: "Successfully created user",
-		Result:  user,
-	})
+	resp := h.uc.SignUp(ctx, &req)
+	if resp.Error != nil {
+		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: resp.Error.Error(), Message: resp.Message})
+		return
+	}
+
+	ctx.JSON(resp.Code, resp)
 }
 
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var req req.LoginReq
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, map[string]any{
-			"status": "failed to parse req",
-			"error":  err.Error(),
-		})
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{Code: http.StatusBadRequest, Error: err.Error(), Message: "Failed to parse request"})
 		return
 	}
-	resp, err := h.uc.Login(ctx, &req)
-	if err != nil {
-		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: err.Error(), Message: resp.Message})
+
+	resp := h.uc.Login(ctx, &req)
+	if resp.Error != nil {
+		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: resp.Error.Error(), Message: resp.Message})
 		return
 	}
+
+	ctx.JSON(resp.Code, resp)
+}
+
+func (h *UserHandler) VerifyOtp(ctx *gin.Context) {
+	var req req.VerifyOtp
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{Code: http.StatusBadRequest, Error: err.Error(), Message: "Failed to parse request"})
+		return
+	}
+
+	user := ctx.GetStringMap("user")
+	req.UserID = int64(user["id"].(float64))
+
+	resp := h.uc.VerifyOtp(ctx, &req)
 	ctx.JSON(resp.Code, resp)
 }

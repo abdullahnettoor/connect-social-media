@@ -25,7 +25,6 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
 
-	user.Status = "PENDING"
 	params, err := conv.StructToMap(user)
 	if err != nil {
 		log.Println("Error occurred while parsing struct to map:", err)
@@ -61,7 +60,16 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 		return nil, err
 	}
 
-	cypher = `CREATE (u:User {username: $Username, email: $Email, password: $Password, status: $Status, fullName: $FullName})
+	cypher = `CREATE (u:User {
+		username: $Username, 
+		email: $Email, 
+		password: $Password, 
+		status: $Status, 
+		fullName: $FullName, 
+		accountType: $AccountType,
+		createdAt: $CreatedAt,
+		updatedAt: $UpdatedAt
+	})
     RETURN u`
 
 	result, err = session.Run(ctx, cypher, params)
@@ -107,6 +115,7 @@ func (r *UserRepository) FindUserByUsername(ctx context.Context, username string
 		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
+	user.Password = record.Values[0].(dbtype.Node).Props["password"].(string)
 	user.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return user, nil
@@ -138,13 +147,13 @@ func (r *UserRepository) FindUserByUserId(ctx context.Context, id int64) (*entit
 	return user, nil
 }
 
-func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status string) (*entity.User, error) {
+func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status string, updatedAt string) (*entity.User, error) {
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
 
-	cypher := `MATCH (n:User) WHERE id(n) = $id SET n.status = $status RETURN n`
+	cypher := `MATCH (n:User) WHERE id(n) = $id SET n.status = $status, n.updatedAt = $updatedAt RETURN n`
 
-	result, err := session.Run(ctx, cypher, map[string]any{"id": id, "status": status})
+	result, err := session.Run(ctx, cypher, map[string]any{"id": id, "status": status, "updatedAt": updatedAt})
 	if err != nil {
 		log.Println("Error occurred while Executing cypher:", err)
 		return nil, err
@@ -162,4 +171,19 @@ func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status 
 	user.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return user, nil
+}
+
+func (r *UserRepository) RemoveUserByEmail(ctx context.Context, email string) error {
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `MATCH (n:User{email:$email}) DELETE n`
+
+	_, err := session.Run(ctx, cypher, map[string]any{"email": email})
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return err
+	}
+
+	return nil
 }
