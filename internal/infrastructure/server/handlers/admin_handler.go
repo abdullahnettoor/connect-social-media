@@ -20,15 +20,21 @@ func NewAdminHandler(uc *usecase.AdminUseCase) *AdminHandler {
 func (h *AdminHandler) Login(ctx *gin.Context) {
 	var req req.AdminLoginReq
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, map[string]any{
-			"status": "failed to parse req",
-			"error":  err.Error(),
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
+			Message: "Failed to parse request",
 		})
 		return
 	}
-	resp, err := h.uc.Login(ctx, &req)
-	if err != nil {
-		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: err.Error(), Message: resp.Message})
+
+	resp := h.uc.Login(ctx, &req)
+	if resp.Error != nil {
+		ctx.JSON(resp.Code, res.CommonRes{
+			Code:    resp.Code,
+			Error:   resp.Error.Error(),
+			Message: resp.Message,
+		})
 		return
 	}
 	ctx.JSON(resp.Code, resp)
@@ -37,17 +43,16 @@ func (h *AdminHandler) Login(ctx *gin.Context) {
 func (h *AdminHandler) BlockUser(ctx *gin.Context) {
 	var req req.UserId
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, map[string]any{
-			"status": "failed to parse req",
-			"error":  err.Error(),
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
+			Message: "Failed to parse request",
 		})
 		return
 	}
-	resp, err := h.uc.BlockUser(ctx, &req)
-	if err != nil {
-		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: err.Error(), Message: resp.Message})
-		return
-	}
+
+	resp := h.uc.BlockUser(ctx, &req)
+
 	ctx.JSON(resp.Code, resp)
 }
 
@@ -60,10 +65,8 @@ func (h *AdminHandler) UnblockUser(ctx *gin.Context) {
 		})
 		return
 	}
-	resp, err := h.uc.UnblockUser(ctx, &req)
-	if err != nil {
-		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: err.Error(), Message: resp.Message})
-		return
-	}
+
+	resp := h.uc.UnblockUser(ctx, &req)
+
 	ctx.JSON(resp.Code, resp)
 }

@@ -20,13 +20,21 @@ func NewUserHandler(uc *usecase.UserUseCase) *UserHandler {
 func (h *UserHandler) SignUp(ctx *gin.Context) {
 	var req req.SignUpReq
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, res.CommonRes{Code: http.StatusBadRequest, Error: err.Error(), Message: "Failed to parse request"})
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code: http.StatusBadRequest, 
+			Error: err.Error(), 
+			Message: "Failed to parse request",
+		})
 		return
 	}
 
 	resp := h.uc.SignUp(ctx, &req)
 	if resp.Error != nil {
-		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: resp.Error.Error(), Message: resp.Message})
+		ctx.JSON(resp.Code, res.CommonRes{
+			Code: resp.Code, 
+			Error: resp.Error.Error(), 
+			Message: resp.Message,
+		})
 		return
 	}
 
@@ -36,13 +44,21 @@ func (h *UserHandler) SignUp(ctx *gin.Context) {
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var req req.LoginReq
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, res.CommonRes{Code: http.StatusBadRequest, Error: err.Error(), Message: "Failed to parse request"})
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code: http.StatusBadRequest, 
+			Error: err.Error(), 
+			Message: "Failed to parse request",
+		})
 		return
 	}
 
 	resp := h.uc.Login(ctx, &req)
 	if resp.Error != nil {
-		ctx.JSON(resp.Code, res.CommonRes{Code: resp.Code, Error: resp.Error.Error(), Message: resp.Message})
+		ctx.JSON(resp.Code, res.CommonRes{
+			Code: resp.Code, 
+			Error: resp.Error.Error(), 
+			Message: resp.Message,
+		})
 		return
 	}
 
@@ -52,7 +68,11 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 func (h *UserHandler) VerifyOtp(ctx *gin.Context) {
 	var req req.VerifyOtp
 	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, res.CommonRes{Code: http.StatusBadRequest, Error: err.Error(), Message: "Failed to parse request"})
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code: http.StatusBadRequest, 
+			Error: err.Error(), 
+			Message: "Failed to parse request",
+		})
 		return
 	}
 
