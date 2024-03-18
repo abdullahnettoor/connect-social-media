@@ -1,6 +1,8 @@
 package req
 
 import (
+	"mime/multipart"
+
 	"github.com/abdullahnettoor/connect-social-media/internal/domain/constants"
 )
 
@@ -27,3 +29,19 @@ type VerifyOtp struct {
 	UserID int64  `json:"userId"`
 	Otp    string `json:"Otp"`
 }
+
+type CreatePostReq struct {
+	Description string `form:"description,omitempty"`
+	Location    string `form:"location,omitempty"`
+	Files       []*multipart.FileHeader
+}
+
+// type Post struct {
+// 	ID          int64    `json:"postId,omitempty"`
+// 	Description string   `json:"description,omitempty"`
+// 	MediaUrls   []string `json:"mediaUrls,omitempty"`
+// 	IsBlocked   bool     `json:"isBlocked,omitempty"`
+// 	CreatedAt   string   `json:"createdAt,omitempty"`
+// 	UpdatedAt   string   `json:"updatedAt,omitempty"`
+// 	User        User     `json:"user,omitempty"`
+// }

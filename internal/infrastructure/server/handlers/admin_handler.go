@@ -32,7 +32,7 @@ func (h *AdminHandler) Login(ctx *gin.Context) {
 	if resp.Error != nil {
 		ctx.JSON(resp.Code, res.CommonRes{
 			Code:    resp.Code,
-			Error:   resp.Error.Error(),
+			Error:   resp.Error,
 			Message: resp.Message,
 		})
 		return

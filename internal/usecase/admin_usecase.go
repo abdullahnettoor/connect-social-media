@@ -30,33 +30,41 @@ func (uc *AdminUseCase) Login(ctx context.Context, req *req.AdminLoginReq) *res.
 	switch {
 	case err == e.ErrAdminNotFound:
 		return &res.AdminLoginRes{
-			Code:    http.StatusNotFound,
-			Message: "Admin not found",
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusNotFound,
+				Message: "Admin not found",
+				Error:   err.Error(),
+			},
 		}
 	case err != nil:
 		return &res.AdminLoginRes{
-			Code:    http.StatusInternalServerError,
-			Message: "server error",
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusInternalServerError,
+				Message: "server error",
+				Error:   err.Error(),
+			},
 		}
 	}
 
 	token, err := jwttoken.CreateToken(viper.GetString("JWT_SECRET"), "admin", time.Hour*24, admin)
 	if err != nil {
 		return &res.AdminLoginRes{
-			Code:    http.StatusInternalServerError,
-			Message: "failed to generate token",
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusInternalServerError,
+				Message: "failed to generate token",
+				Error:   err.Error(),
+			},
 		}
 	}
 	admin.Password = ""
 
 	return &res.AdminLoginRes{
-		Code:    http.StatusOK,
-		Message: "User logged in successfully",
-		Token:   token,
-		Admin:   *admin,
+		CommonRes: res.CommonRes{
+			Code:    http.StatusOK,
+			Message: "User logged in successfully",
+		},
+		Token: token,
+		Admin: *admin,
 	}
 }
 
@@ -81,7 +89,7 @@ func (uc *AdminUseCase) BlockUser(ctx context.Context, req *req.UserId) *res.Com
 		return &res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "failed to generate token",
-			Error:   err,
+			Error:   err.Error(),
 		}
 	}
 	user.Password = ""
@@ -97,7 +105,7 @@ func (uc *AdminUseCase) UnblockUser(ctx context.Context, req *req.UserId) *res.C
 		return &res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "failed to generate token",
-			Error:   err,
+			Error:   err.Error(),
 		}
 	}
 	user.Password = ""

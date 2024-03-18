@@ -33,9 +33,11 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 		msg := "Error Occurred while hashing password"
 		log.Println(msg)
 		return &res.SignUpRes{
-			Code:    http.StatusInternalServerError,
-			Message: msg,
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusInternalServerError,
+				Message: msg,
+				Error:   err.Error(),
+			},
 		}
 	}
 
@@ -56,16 +58,20 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 	switch err {
 	case e.ErrUsernameConflict, e.ErrEmailAndUsernameConflict, e.ErrEmailConflict:
 		return &res.SignUpRes{
-			Code:    http.StatusConflict,
-			Message: "User already exist",
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusConflict,
+				Message: "User already exist",
+				Error:   err.Error(),
+			},
 		}
 	}
 	if err != nil {
 		return &res.SignUpRes{
-			Code:    http.StatusInternalServerError,
-			Message: "server error",
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusInternalServerError,
+				Message: "server error",
+				Error:   err.Error(),
+			},
 		}
 	}
 
@@ -82,9 +88,11 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 		msg := "Error Occurred while sending otp"
 		log.Println(msg)
 		return &res.SignUpRes{
-			Code:    http.StatusInternalServerError,
-			Message: msg,
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusInternalServerError,
+				Message: msg,
+				Error:   err.Error(),
+			},
 		}
 	}
 
@@ -92,16 +100,19 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 	if err != nil {
 		uc.repo.RemoveUserByEmail(ctx, req.Email)
 		return &res.SignUpRes{
-			Code:    http.StatusInternalServerError,
-			Message: "failed to generate token",
-			Error:   err,
+			CommonRes: res.CommonRes{
+				Code:    http.StatusInternalServerError,
+				Message: "failed to generate token",
+				Error:   err.Error(),
+			},
 		}
 	}
 
 	return &res.SignUpRes{
-		Code:    http.StatusOK,
-		Message: "Verify OTP in your email",
-		Token:   token,
+		CommonRes: res.CommonRes{
+			Code:    http.StatusOK,
+			Message: "Verify OTP in your email",
+		}, Token: token,
 	}
 }
 
@@ -184,24 +195,27 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 
 	switch {
 	case err == e.ErrUserNotFound:
-		return &res.LoginRes{
+		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusNotFound,
 			Message: "User not found",
-			Error:   e.ErrUserNotFound,
+			Error:   err.Error(),
+		},
 		}
 	case err != nil:
-		return &res.LoginRes{
+		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "server error",
-			Error:   err,
+			Error:   err.Error(),
+		},
 		}
 	}
 
 	if err := helper.CompareHashedPassword(user.Password, req.Password); err != nil {
-		return &res.LoginRes{
+		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusUnauthorized,
 			Message: "Invalid Password",
-			Error:   err,
+			Error:   err.Error(),
+		},
 		}
 	}
 	user.Password = ""
@@ -212,17 +226,19 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 		time.Hour*24,
 		user)
 	if err != nil {
-		return &res.LoginRes{
+		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "failed to generate token",
-			Error:   err,
+			Error:   err.Error(),
+		},
 		}
 	}
 
-	return &res.LoginRes{
+	return &res.LoginRes{CommonRes: res.CommonRes{
 		Code:    http.StatusOK,
 		Message: "User logged in successfully",
-		Token:   token,
-		User:    *user,
+	},
+		Token: token,
+		User:  *user,
 	}
 }
