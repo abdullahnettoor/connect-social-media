@@ -96,7 +96,7 @@ func SendOtp(from, to, password, otp, subject string) error {
 	m.SetHeader("To", to)
 
 	// Set E-Mail subject
-	m.SetHeader("Subject", "Gomail test subject")
+	m.SetHeader("Subject", subject)
 
 	// Set E-Mail body. You can set plain text or html with text/html
 	m.SetBody("text/html", emailBody)
