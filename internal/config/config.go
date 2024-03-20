@@ -10,6 +10,8 @@ type Config struct {
 	DbUri      string `mapstructure:"NEO4J_URI"`
 	DbUsername string `mapstructure:"NEO4J_USERNAME"`
 	DbPassword string `mapstructure:"NEO4J_PASSWORD"`
+
+	ContentCloudUri string `mapstructure:"IMG_CLOUD_URL"`
 }
 
 func LoadConfig() (c *Config, err error) {

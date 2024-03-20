@@ -35,9 +35,9 @@ func AuthenticateAdmin(ctx *gin.Context) {
 	ctx.Next()
 }
 
-// Authorize admin
+// Authorize user
 func AuthenticateUser(ctx *gin.Context) {
-	log.Println("MW: Authorizing Admin")
+	log.Println("MW: Authorizing User")
 
 	tokenString := strings.TrimPrefix(ctx.GetHeader("Authorization"), "Bearer ")
 

@@ -77,7 +77,7 @@ func (h *UserHandler) VerifyOtp(ctx *gin.Context) {
 	}
 
 	user := ctx.GetStringMap("user")
-	req.UserID = int64(user["id"].(float64))
+	req.UserID = int64(user["userId"].(float64))
 
 	resp := h.uc.VerifyOtp(ctx, &req)
 	ctx.JSON(resp.Code, resp)

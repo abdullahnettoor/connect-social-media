@@ -13,6 +13,7 @@ type ServeHttp struct {
 func NewServeHttp(
 	userHandler *handlers.UserHandler,
 	adminHandler *handlers.AdminHandler,
+	postHandler *handlers.PostHandler,
 ) *ServeHttp {
 	server := gin.New()
 	server.Use(gin.Logger())
@@ -21,7 +22,7 @@ func NewServeHttp(
 		ctx.String(200, "Server Health OK")
 	})
 
-	routes.SetupUserRoutes(server, userHandler)
+	routes.SetupUserRoutes(server, userHandler, postHandler)
 	routes.SetupAdminRoutes(server, adminHandler)
 
 	return &ServeHttp{server}

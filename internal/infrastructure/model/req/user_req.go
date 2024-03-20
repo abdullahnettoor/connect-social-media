@@ -34,6 +34,7 @@ type CreatePostReq struct {
 	Description string `form:"description,omitempty"`
 	Location    string `form:"location,omitempty"`
 	Files       []*multipart.FileHeader
+	UserID      int64 `json:"userId"`
 }
 
 // type Post struct {

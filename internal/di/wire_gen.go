@@ -13,6 +13,7 @@ import (
 	"github.com/abdullahnettoor/connect-social-media/internal/infrastructure/server/handlers"
 	"github.com/abdullahnettoor/connect-social-media/internal/repo"
 	"github.com/abdullahnettoor/connect-social-media/internal/usecase"
+	"github.com/abdullahnettoor/connect-social-media/pkg/image_uploader"
 )
 
 // Injectors from wire.go:
@@ -22,12 +23,21 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 	if err != nil {
 		return nil, err
 	}
+	cloudinary, err := imgupload.ConnectCloudinary(cfg)
+	if err != nil {
+		return nil, err
+	}
+	
 	userRepository := repo.NewUserRepository(driverWithContext)
 	userUseCase := usecase.NewUserUseCase(userRepository)
 	userHandler := handlers.NewUserHandler(userUseCase)
 	adminRepository := repo.NewAdminRepository(driverWithContext)
 	adminUseCase := usecase.NewAdminUseCase(adminRepository, userRepository)
 	adminHandler := handlers.NewAdminHandler(adminUseCase)
-	serveHttp := server.NewServeHttp(userHandler, adminHandler)
+	postRepository := repo.NewPostRepository(driverWithContext)
+	contentRepository := repo.NewContentRepository(cloudinary)
+	postUseCase := usecase.NewPostUseCase(postRepository, contentRepository)
+	postHandler := handlers.NewPostHandler(postUseCase)
+	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler)
 	return serveHttp, nil
 }

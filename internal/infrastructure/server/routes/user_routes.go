@@ -6,10 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupUserRoutes(engine *gin.Engine, userHandler *handlers.UserHandler) {
+func SetupUserRoutes(
+	engine *gin.Engine,
+	userHandler *handlers.UserHandler,
+	postHandler *handlers.PostHandler,
+) {
 	engine.POST("/signUp", userHandler.SignUp)
 	engine.POST("/login", userHandler.Login)
 
 	user := engine.Group("/").Use(middlewares.AuthenticateUser)
 	user.PATCH("/verifyOtp", userHandler.VerifyOtp)
+	user.POST("/newPost", postHandler.CreatePost)
 }
