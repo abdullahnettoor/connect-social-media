@@ -22,11 +22,11 @@ type LoginReq struct {
 }
 
 type UserId struct {
-	UserID int64 `json:"userId"`
+	UserID string `json:"userId"`
 }
 
 type VerifyOtp struct {
-	UserID int64  `json:"userId"`
+	UserID string  `json:"userId"`
 	Otp    string `json:"Otp"`
 }
 
@@ -34,7 +34,7 @@ type CreatePostReq struct {
 	Description string `form:"description,omitempty"`
 	Location    string `form:"location,omitempty"`
 	Files       []*multipart.FileHeader
-	UserID      int64 `json:"userId"`
+	UserID      string `json:"userId"`
 }
 
 // type Post struct {

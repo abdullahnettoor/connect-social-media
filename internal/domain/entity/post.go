@@ -1,7 +1,7 @@
 package entity
 
 type Post struct {
-	ID          int64   `json:"postId,omitempty"`
+	ID          string   `json:"postId,omitempty"`
 	Description string   `json:"description,omitempty"`
 	Location    string   `json:"location,omitempty"`
 	MediaUrls   []string `json:"mediaUrls,omitempty"`

@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
+	e "github.com/abdullahnettoor/connect-social-media/internal/domain/error"
 	"github.com/abdullahnettoor/connect-social-media/internal/infrastructure/model/req"
 	"github.com/abdullahnettoor/connect-social-media/internal/infrastructure/model/res"
 	"github.com/abdullahnettoor/connect-social-media/internal/usecase"
@@ -21,8 +23,8 @@ func (h *UserHandler) SignUp(ctx *gin.Context) {
 	var req req.SignUpReq
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, res.CommonRes{
-			Code: http.StatusBadRequest, 
-			Error: err.Error(), 
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
 			Message: "Failed to parse request",
 		})
 		return
@@ -31,8 +33,8 @@ func (h *UserHandler) SignUp(ctx *gin.Context) {
 	resp := h.uc.SignUp(ctx, &req)
 	if resp.Error != nil {
 		ctx.JSON(resp.Code, res.CommonRes{
-			Code: resp.Code, 
-			Error: resp.Error, 
+			Code:    resp.Code,
+			Error:   resp.Error,
 			Message: resp.Message,
 		})
 		return
@@ -45,8 +47,8 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	var req req.LoginReq
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, res.CommonRes{
-			Code: http.StatusBadRequest, 
-			Error: err.Error(), 
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
 			Message: "Failed to parse request",
 		})
 		return
@@ -55,8 +57,8 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	resp := h.uc.Login(ctx, &req)
 	if resp.Error != nil {
 		ctx.JSON(resp.Code, res.CommonRes{
-			Code: resp.Code, 
-			Error: resp.Error, 
+			Code:    resp.Code,
+			Error:   resp.Error,
 			Message: resp.Message,
 		})
 		return
@@ -69,15 +71,25 @@ func (h *UserHandler) VerifyOtp(ctx *gin.Context) {
 	var req req.VerifyOtp
 	if err := ctx.BindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, res.CommonRes{
-			Code: http.StatusBadRequest, 
-			Error: err.Error(), 
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
 			Message: "Failed to parse request",
 		})
 		return
 	}
 
 	user := ctx.GetStringMap("user")
-	req.UserID = int64(user["userId"].(float64))
+	fmt.Println("User is", user)
+	v, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+	req.UserID = v.(string)
 
 	resp := h.uc.VerifyOtp(ctx, &req)
 	ctx.JSON(resp.Code, resp)

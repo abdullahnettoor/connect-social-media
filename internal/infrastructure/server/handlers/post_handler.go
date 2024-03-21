@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	e "github.com/abdullahnettoor/connect-social-media/internal/domain/error"
 	"github.com/abdullahnettoor/connect-social-media/internal/infrastructure/model/req"
 	"github.com/abdullahnettoor/connect-social-media/internal/infrastructure/model/res"
 	"github.com/abdullahnettoor/connect-social-media/internal/usecase"
@@ -31,8 +32,17 @@ func (h *PostHandler) CreatePost(ctx *gin.Context) {
 
 	form, _ := ctx.MultipartForm()
 	user := ctx.GetStringMap("user")
-	req.UserID = int64(user["userId"].(float64))
-	req.Files = form.File["images"]
+	v, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to get userId from token",
+		})
+		return
+	}
+	req.UserID = v.(string)
+	req.Files = form.File["medias"]
 
 	ctx.JSON(http.StatusCreated, h.uc.CreatePost(ctx, &req))
 }

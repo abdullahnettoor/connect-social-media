@@ -28,6 +28,7 @@ func (uc *PostUseCase) CreatePost(ctx context.Context, req *req.CreatePostReq) *
 
 	var wg sync.WaitGroup
 	urlChannel := make(chan string, len(req.Files))
+	fmt.Println("", req.Files)
 	for i, file := range req.Files {
 		fmt.Println("File no:", i)
 		wg.Add(1)
@@ -69,8 +70,10 @@ func (uc *PostUseCase) CreatePost(ctx context.Context, req *req.CreatePostReq) *
 	for url := range urlChannel {
 		urls = append(urls, url)
 	}
+	fmt.Println("😀")
 
 	var post = &entity.Post{
+		ID:          uuid.NewString(),
 		Description: req.Description,
 		Location:    req.Location,
 		MediaUrls:   urls,

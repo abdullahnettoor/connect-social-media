@@ -15,6 +15,7 @@ import (
 	"github.com/abdullahnettoor/connect-social-media/pkg/emailer"
 	"github.com/abdullahnettoor/connect-social-media/pkg/helper"
 	jwttoken "github.com/abdullahnettoor/connect-social-media/pkg/jwt"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 )
 
@@ -44,6 +45,7 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 	otp, _ := helper.GenerateOTP()
 
 	user := &entity.User{
+		ID:          uuid.NewString(),
 		FullName:    req.FullName,
 		Username:    req.Username,
 		Email:       req.Email,

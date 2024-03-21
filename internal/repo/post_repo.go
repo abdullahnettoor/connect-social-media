@@ -19,7 +19,7 @@ func NewPostRepository(db neo4j.DriverWithContext) *PostRepository {
 	return &PostRepository{db}
 }
 
-func (r *PostRepository) Create(ctx context.Context, userId int64, post *entity.Post) (*entity.Post, error) {
+func (r *PostRepository) Create(ctx context.Context, userId string, post *entity.Post) (*entity.Post, error) {
 
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
@@ -33,6 +33,7 @@ func (r *PostRepository) Create(ctx context.Context, userId int64, post *entity.
 	fmt.Println("Params is", params)
 
 	cypher := `CREATE (p:Post {
+		id :$ID,
 		description: $Description, 
 		location: $Location, 
 		mediaUrls: $MediaUrls, 
@@ -41,10 +42,11 @@ func (r *PostRepository) Create(ctx context.Context, userId int64, post *entity.
 		updatedAt: $UpdatedAt
 	}) 
 	WITH p
-	MATCH (u:User) WHERE id(u) = $UserId
+	MATCH (u:User { id: $UserId})
 	CREATE (u)-[:POSTED]->(p)
-	RETURN p, u.id AS userId, u.username AS username, u.profileUrl AS profileUrl	
+	RETURN p	
 	`
+	// RETURN p, u.id AS userId, u.username AS username, u.profileUrl AS profileUrl	
 	// cypher := `CREATE (p:Post {
 	// 	description: $Description,
 	// 	location: $Location,
@@ -73,7 +75,6 @@ func (r *PostRepository) Create(ctx context.Context, userId int64, post *entity.
 		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
-	post.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return post, nil
 }

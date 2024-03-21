@@ -40,7 +40,6 @@ func (r *AdminRepository) FindAdminByEmail(ctx context.Context, email string) (*
 		log.Println("Error occurred while converting userMap to admin:", err)
 		return nil, err
 	}
-	admin.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return admin, nil
 }

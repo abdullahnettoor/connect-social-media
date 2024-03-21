@@ -61,6 +61,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 	}
 
 	cypher = `CREATE (u:User {
+		id: $ID,
 		username: $Username, 
 		email: $Email, 
 		password: $Password, 
@@ -89,7 +90,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *entity.User) (*en
 		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
-	newUser.ID = record.Values[0].(dbtype.Node).GetId()
+	newUser.ID = record.Values[0].(dbtype.Node).Props["id"].(string)
 
 	return newUser, nil
 }
@@ -98,7 +99,7 @@ func (r *UserRepository) FindUserByUsername(ctx context.Context, username string
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
 
-	cypher := `MATCH (u:User) WHERE u.username = $username RETURN u`
+	cypher := `MATCH (u:User {username: $username}) RETURN u`
 
 	result, err := session.Run(ctx, cypher, map[string]any{"username": username})
 	if err != nil {
@@ -116,16 +117,15 @@ func (r *UserRepository) FindUserByUsername(ctx context.Context, username string
 		return nil, err
 	}
 	user.Password = record.Values[0].(dbtype.Node).Props["password"].(string)
-	user.ID = record.Values[0].(dbtype.Node).GetId()
 
 	return user, nil
 }
 
-func (r *UserRepository) FindUserByUserId(ctx context.Context, id int64) (*entity.User, error) {
+func (r *UserRepository) FindUserByUserId(ctx context.Context, id string) (*entity.User, error) {
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
 
-	cypher := `MATCH (n:User) WHERE id(n) = $id RETURN n`
+	cypher := `MATCH (n:User {id: $id}) RETURN n`
 
 	result, err := session.Run(ctx, cypher, map[string]any{"id": id})
 	if err != nil {
@@ -142,16 +142,17 @@ func (r *UserRepository) FindUserByUserId(ctx context.Context, id int64) (*entit
 		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
-	user.ID = record.Values[0].(dbtype.Node).GetId()
+	user.ID = record.Values[0].(dbtype.Node).Props["id"].(string)
+
 
 	return user, nil
 }
 
-func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status string, updatedAt string) (*entity.User, error) {
+func (r *UserRepository) UpdateUserStatus(ctx context.Context, id string, status string, updatedAt string) (*entity.User, error) {
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
 
-	cypher := `MATCH (n:User) WHERE id(n) = $id SET n.status = $status, n.updatedAt = $updatedAt RETURN n`
+	cypher := `MATCH (n:User {id: $id}) SET n.status = $status, n.updatedAt = $updatedAt RETURN n`
 
 	result, err := session.Run(ctx, cypher, map[string]any{"id": id, "status": status, "updatedAt": updatedAt})
 	if err != nil {
@@ -168,7 +169,8 @@ func (r *UserRepository) UpdateUserStatus(ctx context.Context, id int64, status 
 		log.Println("Error occurred while converting userMap to user:", err)
 		return nil, err
 	}
-	user.ID = record.Values[0].(dbtype.Node).GetId()
+	user.ID = record.Values[0].(dbtype.Node).Props["id"].(string)
+
 
 	return user, nil
 }

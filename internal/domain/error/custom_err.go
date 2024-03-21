@@ -12,6 +12,8 @@ var (
 	ErrOtpTimeOut               = errors.New("your otp has timeout")
 
 	ErrAdminNotFound = errors.New("user not found")
+
+	ErrKeyNotFound = errors.New("given key not found in map")
 	// ErrIsEmpty                  = errors.New("is empty")
 	// ErrDb                       = errors.New("db error")
 	// ErrInvalidPassword          = errors.New("invalid password")
