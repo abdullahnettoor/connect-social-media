@@ -26,7 +26,7 @@ type UserId struct {
 }
 
 type VerifyOtp struct {
-	UserID string  `json:"userId"`
+	UserID string `json:"userId"`
 	Otp    string `json:"Otp"`
 }
 
@@ -35,6 +35,11 @@ type CreatePostReq struct {
 	Location    string `form:"location,omitempty"`
 	Files       []*multipart.FileHeader
 	UserID      string `json:"userId"`
+}
+
+type LikeUnlikePostReq struct {
+	PostID string `json:"postId"`
+	UserID string `json:"userId"`
 }
 
 // type Post struct {

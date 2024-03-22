@@ -46,7 +46,7 @@ func (r *PostRepository) Create(ctx context.Context, userId string, post *entity
 	CREATE (u)-[:POSTED]->(p)
 	RETURN p	
 	`
-	// RETURN p, u.id AS userId, u.username AS username, u.profileUrl AS profileUrl	
+	// RETURN p, u.id AS userId, u.username AS username, u.profileUrl AS profileUrl
 	// cypher := `CREATE (p:Post {
 	// 	description: $Description,
 	// 	location: $Location,
@@ -77,4 +77,30 @@ func (r *PostRepository) Create(ctx context.Context, userId string, post *entity
 	}
 
 	return post, nil
+}
+
+func (r *PostRepository) LikePost(ctx context.Context, userId, postId string) error {
+
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `MATCH (p:Post {
+		id :$postId}) WITH p
+	MATCH (u:User { id: $userId})
+	MERGE (u)-[:LIKED]->(p)
+	`
+
+	_, err := session.Run(ctx, cypher, map[string]any{"userId": userId, "postId": postId})
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return err
+	}
+
+	// _, err = result.Single(ctx)
+	// if err != nil {
+	// 	log.Println("Error occurred while retrieving new post:", err)
+	// 	return err
+	// }
+
+	return nil
 }

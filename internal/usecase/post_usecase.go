@@ -97,3 +97,19 @@ func (uc *PostUseCase) CreatePost(ctx context.Context, req *req.CreatePostReq) *
 		Result:  post,
 	}
 }
+
+func (uc *PostUseCase) LikePost(ctx context.Context, req *req.LikeUnlikePostReq) *res.CommonRes {
+	err := uc.postRepo.LikePost(ctx, req.UserID, req.PostID)
+	if err != nil {
+		return &res.CommonRes{
+			Code:    http.StatusCreated,
+			Message: "Error in liking Post",
+			Error:   err.Error(),
+		}
+	}
+
+	return &res.CommonRes{
+		Code:    http.StatusCreated,
+		Message: "Liked Post",
+	}
+}

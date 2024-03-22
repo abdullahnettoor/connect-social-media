@@ -17,4 +17,5 @@ func SetupUserRoutes(
 	user := engine.Group("/").Use(middlewares.AuthenticateUser)
 	user.PATCH("/verifyOtp", userHandler.VerifyOtp)
 	user.POST("/newPost", postHandler.CreatePost)
+	user.POST("/posts/likePost", postHandler.LikePost)
 }

@@ -46,3 +46,30 @@ func (h *PostHandler) CreatePost(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, h.uc.CreatePost(ctx, &req))
 }
+
+func (h *PostHandler) LikePost(ctx *gin.Context) {
+
+	var req req.LikeUnlikePostReq
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+
+	user := ctx.GetStringMap("user")
+	userId, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to get userId from token",
+		})
+		return
+	}
+	req.UserID = userId.(string)
+
+	ctx.JSON(http.StatusCreated, h.uc.LikePost(ctx, &req))
+}
