@@ -124,7 +124,7 @@ func (uc *UserUseCase) VerifyOtp(ctx context.Context, req *req.VerifyOtp) *res.C
 	switch {
 	case err == e.ErrUserNotFound:
 		return &res.CommonRes{
-			Code:    http.StatusBadRequest,
+			Code:    http.StatusNotFound,
 			Message: "user not found with provided id",
 			Error:   err.Error(),
 		}
