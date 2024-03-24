@@ -96,11 +96,26 @@ func (r *PostRepository) LikePost(ctx context.Context, userId, postId string) er
 		return err
 	}
 
-	// _, err = result.Single(ctx)
-	// if err != nil {
-	// 	log.Println("Error occurred while retrieving new post:", err)
-	// 	return err
-	// }
+	return nil
+}
+
+func (r *PostRepository) UnlikePost(ctx context.Context, userId, postId string) error {
+
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `MATCH 
+	(:Post {id :$postId})
+	-[r:LIKED]->
+	(:User { id: $userId})
+	DELETE r
+	`
+
+	_, err := session.Run(ctx, cypher, map[string]any{"userId": userId, "postId": postId})
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return err
+	}
 
 	return nil
 }

@@ -113,3 +113,19 @@ func (uc *PostUseCase) LikePost(ctx context.Context, req *req.LikeUnlikePostReq)
 		Message: "Liked Post",
 	}
 }
+
+func (uc *PostUseCase) UnlikePost(ctx context.Context, req *req.LikeUnlikePostReq) *res.CommonRes {
+	err := uc.postRepo.UnlikePost(ctx, req.UserID, req.PostID)
+	if err != nil {
+		return &res.CommonRes{
+			Code:    http.StatusCreated,
+			Message: "Error in unlike Post",
+			Error:   err.Error(),
+		}
+	}
+
+	return &res.CommonRes{
+		Code:    http.StatusCreated,
+		Message: "Removed like from Post",
+	}
+}

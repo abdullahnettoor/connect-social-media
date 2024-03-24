@@ -18,4 +18,5 @@ func SetupUserRoutes(
 	user.PATCH("/verifyOtp", userHandler.VerifyOtp)
 	user.POST("/newPost", postHandler.CreatePost)
 	user.POST("/posts/likePost", postHandler.LikePost)
+	user.POST("/posts/unlikePost", postHandler.UnlikePost)
 }
