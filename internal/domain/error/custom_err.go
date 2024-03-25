@@ -14,7 +14,8 @@ var (
 	ErrAdminNotFound = errors.New("user not found")
 
 	ErrKeyNotFound = errors.New("given key not found in map")
-	// ErrIsEmpty                  = errors.New("is empty")
+
+	ErrNoRecordsAffected = errors.New("no records were affected")
 	// ErrDb                       = errors.New("db error")
 	// ErrInvalidPassword          = errors.New("invalid password")
 	// ErrInvalidStatusValue       = errors.New("invalid status value")

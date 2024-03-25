@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/abdullahnettoor/connect-social-media/internal/domain/entity"
+	e "github.com/abdullahnettoor/connect-social-media/internal/domain/error"
 	"github.com/abdullahnettoor/connect-social-media/pkg/conv"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j/dbtype"
@@ -42,7 +43,7 @@ func (r *PostRepository) Create(ctx context.Context, userId string, post *entity
 		updatedAt: $UpdatedAt
 	}) 
 	WITH p
-	MATCH (u:User { id: $UserId})
+	MATCH (u:User { userId: $UserId})
 	CREATE (u)-[:POSTED]->(p)
 	RETURN p	
 	`
@@ -86,14 +87,19 @@ func (r *PostRepository) LikePost(ctx context.Context, userId, postId string) er
 
 	cypher := `MATCH (p:Post {
 		id :$postId}) WITH p
-	MATCH (u:User { id: $userId})
-	MERGE (u)-[:LIKED]->(p)
+	MATCH (u:User {userId: $userId})
+	MERGE (u)-[r:LIKED]->(p)
+	RETURN r
 	`
 
-	_, err := session.Run(ctx, cypher, map[string]any{"userId": userId, "postId": postId})
+	result, err := session.Run(ctx, cypher, map[string]any{"userId": userId, "postId": postId})
 	if err != nil {
 		log.Println("Error occurred while Executing cypher:", err)
 		return err
+	}
+	if !result.Peek(ctx) {
+		log.Println("No records affected")
+		return e.ErrNoRecordsAffected
 	}
 
 	return nil
@@ -104,10 +110,10 @@ func (r *PostRepository) UnlikePost(ctx context.Context, userId, postId string) 
 	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
 	defer session.Close(ctx)
 
-	cypher := `MATCH 
-	(:Post {id :$postId})
-	-[r:LIKED]->
-	(:User { id: $userId})
+	cypher := `MATCH (p:Post {
+		id :$postId}) WITH p
+	MATCH (u:User { userId: $userId})
+	MATCH (u)-[r:LIKED]->(p)
 	DELETE r
 	`
 
@@ -116,6 +122,10 @@ func (r *PostRepository) UnlikePost(ctx context.Context, userId, postId string) 
 		log.Println("Error occurred while Executing cypher:", err)
 		return err
 	}
+	// if !result.Peek(ctx) {
+	// 	log.Println("No records affected")
+	// 	return e.ErrNoRecordsAffected
+	// }
 
 	return nil
 }
