@@ -34,7 +34,7 @@ func (r *PostRepository) Create(ctx context.Context, userId string, post *entity
 	fmt.Println("Params is", params)
 
 	cypher := `CREATE (p:Post {
-		id :$ID,
+		postId :$ID,
 		description: $Description, 
 		location: $Location, 
 		mediaUrls: $MediaUrls, 
@@ -86,7 +86,7 @@ func (r *PostRepository) LikePost(ctx context.Context, userId, postId string) er
 	defer session.Close(ctx)
 
 	cypher := `MATCH (p:Post {
-		id :$postId}) WITH p
+		postId :$postId}) WITH p
 	MATCH (u:User {userId: $userId})
 	MERGE (u)-[r:LIKED]->(p)
 	RETURN r
@@ -111,7 +111,7 @@ func (r *PostRepository) UnlikePost(ctx context.Context, userId, postId string) 
 	defer session.Close(ctx)
 
 	cypher := `MATCH (p:Post {
-		id :$postId}) WITH p
+		postId :$postId}) WITH p
 	MATCH (u:User { userId: $userId})
 	MATCH (u)-[r:LIKED]->(p)
 	DELETE r
