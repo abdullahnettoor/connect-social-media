@@ -10,17 +10,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PostHandler struct {
-	uc *usecase.PostUseCase
+type CommentHandler struct {
+	uc *usecase.CommentUseCase
 }
 
-func NewPostHandler(uc *usecase.PostUseCase) *PostHandler {
-	return &PostHandler{uc}
+func NewCommentHandler(uc *usecase.CommentUseCase) *CommentHandler {
+	return &CommentHandler{uc}
 }
 
-func (h *PostHandler) CreatePost(ctx *gin.Context) {
+func (h *CommentHandler) CreateComment(ctx *gin.Context) {
 
-	var req req.CreatePostReq
+	var req req.CreateCommentReq
 	if err := ctx.Bind(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, res.CommonRes{
 			Code:    http.StatusBadRequest,
@@ -30,7 +30,6 @@ func (h *PostHandler) CreatePost(ctx *gin.Context) {
 		return
 	}
 
-	form, _ := ctx.MultipartForm()
 	user := ctx.GetStringMap("user")
 	v, ok := user["userId"]
 	if !ok {
@@ -42,15 +41,20 @@ func (h *PostHandler) CreatePost(ctx *gin.Context) {
 		return
 	}
 	req.UserID = v.(string)
-	req.Files = form.File["medias"]
 
-	ctx.JSON(http.StatusCreated, h.uc.CreatePost(ctx, &req))
+	resp := h.uc.CreateComment(ctx, &req)
+	if resp.Error != nil {
+		ctx.JSON(resp.Code, resp)
+		return
+	}
+
+	ctx.JSON(resp.Code, resp)
 }
 
-func (h *PostHandler) LikePost(ctx *gin.Context) {
+func (h *CommentHandler) DeleteComment(ctx *gin.Context) {
 
-	var req req.LikeUnlikePostReq
-	if err := ctx.BindJSON(&req); err != nil {
+	var req req.DeleteCommentReq
+	if err := ctx.Bind(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, res.CommonRes{
 			Code:    http.StatusBadRequest,
 			Error:   err.Error(),
@@ -60,7 +64,7 @@ func (h *PostHandler) LikePost(ctx *gin.Context) {
 	}
 
 	user := ctx.GetStringMap("user")
-	userId, ok := user["userId"]
+	v, ok := user["userId"]
 	if !ok {
 		ctx.JSON(http.StatusBadRequest, res.CommonRes{
 			Code:    http.StatusBadRequest,
@@ -69,34 +73,9 @@ func (h *PostHandler) LikePost(ctx *gin.Context) {
 		})
 		return
 	}
-	req.UserID = userId.(string)
+	req.UserID = v.(string)
 
-	ctx.JSON(http.StatusNoContent, h.uc.LikePost(ctx, &req))
-}
+	resp := h.uc.DeleteComment(ctx, &req)
 
-func (h *PostHandler) UnlikePost(ctx *gin.Context) {
-
-	var req req.LikeUnlikePostReq
-	if err := ctx.BindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, res.CommonRes{
-			Code:    http.StatusBadRequest,
-			Error:   err.Error(),
-			Message: "Failed to parse request",
-		})
-		return
-	}
-
-	user := ctx.GetStringMap("user")
-	userId, ok := user["userId"]
-	if !ok {
-		ctx.JSON(http.StatusBadRequest, res.CommonRes{
-			Code:    http.StatusBadRequest,
-			Error:   e.ErrKeyNotFound.Error(),
-			Message: "Failed to get userId from token",
-		})
-		return
-	}
-	req.UserID = userId.(string)
-
-	ctx.JSON(http.StatusNoContent, h.uc.UnlikePost(ctx, &req))
+	ctx.JSON(resp.Code, resp)
 }

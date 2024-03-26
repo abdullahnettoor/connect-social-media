@@ -30,6 +30,9 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 		repo.NewContentRepository,
 		usecase.NewPostUseCase,
 		handlers.NewPostHandler,
+		repo.NewCommentRepository,
+		usecase.NewCommentUseCase,
+		handlers.NewCommentHandler,
 	)
 
 	return &server.ServeHttp{}, nil

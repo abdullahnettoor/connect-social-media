@@ -42,6 +42,17 @@ type LikeUnlikePostReq struct {
 	UserID string `json:"userId"`
 }
 
+type CreateCommentReq struct {
+	Comment string `json:"comment,omitempty"`
+	UserID  string `json:"userId"`
+	PostID  string `json:"postId"`
+}
+
+type DeleteCommentReq struct {
+	UserID    string `json:"userId"`
+	CommentID string `json:"commentId"`
+}
+
 // type Post struct {
 // 	ID          int64    `json:"postId,omitempty"`
 // 	Description string   `json:"description,omitempty"`

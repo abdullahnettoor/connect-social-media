@@ -14,6 +14,7 @@ func NewServeHttp(
 	userHandler *handlers.UserHandler,
 	adminHandler *handlers.AdminHandler,
 	postHandler *handlers.PostHandler,
+	commentHandler *handlers.CommentHandler,
 ) *ServeHttp {
 	server := gin.New()
 	server.Use(gin.Logger())
@@ -22,7 +23,7 @@ func NewServeHttp(
 		ctx.String(200, "Server Health OK")
 	})
 
-	routes.SetupUserRoutes(server, userHandler, postHandler)
+	routes.SetupUserRoutes(server, userHandler, postHandler, commentHandler)
 	routes.SetupAdminRoutes(server, adminHandler)
 
 	return &ServeHttp{server}

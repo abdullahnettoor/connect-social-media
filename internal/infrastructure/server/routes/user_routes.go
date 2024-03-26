@@ -10,13 +10,19 @@ func SetupUserRoutes(
 	engine *gin.Engine,
 	userHandler *handlers.UserHandler,
 	postHandler *handlers.PostHandler,
+	commentHandler *handlers.CommentHandler,
 ) {
 	engine.POST("/signUp", userHandler.SignUp)
 	engine.POST("/login", userHandler.Login)
 
 	user := engine.Group("/").Use(middlewares.AuthenticateUser)
 	user.PATCH("/verifyOtp", userHandler.VerifyOtp)
+
 	user.POST("/newPost", postHandler.CreatePost)
-	user.POST("/posts/likePost", postHandler.LikePost)
-	user.POST("/posts/unlikePost", postHandler.UnlikePost)
+
+	user.PATCH("/posts/likePost", postHandler.LikePost)
+	user.DELETE("/posts/unlikePost", postHandler.UnlikePost)
+
+	user.POST("/commentPost", commentHandler.CreateComment)
+	user.DELETE("/deleteComment", commentHandler.DeleteComment)
 }

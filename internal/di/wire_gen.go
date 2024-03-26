@@ -27,7 +27,6 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 	if err != nil {
 		return nil, err
 	}
-	
 	userRepository := repo.NewUserRepository(driverWithContext)
 	userUseCase := usecase.NewUserUseCase(userRepository)
 	userHandler := handlers.NewUserHandler(userUseCase)
@@ -38,6 +37,9 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 	contentRepository := repo.NewContentRepository(cloudinary)
 	postUseCase := usecase.NewPostUseCase(postRepository, contentRepository)
 	postHandler := handlers.NewPostHandler(postUseCase)
-	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler)
+	commentRepository := repo.NewCommentRepository(driverWithContext)
+	commentUseCase := usecase.NewCommentUseCase(commentRepository, contentRepository)
+	commentHandler := handlers.NewCommentHandler(commentUseCase)
+	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler, commentHandler)
 	return serveHttp, nil
 }
