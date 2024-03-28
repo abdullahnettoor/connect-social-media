@@ -94,3 +94,61 @@ func (h *UserHandler) VerifyOtp(ctx *gin.Context) {
 	resp := h.uc.VerifyOtp(ctx, &req)
 	ctx.JSON(resp.Code, resp)
 }
+
+func (h *UserHandler) FollowUser(ctx *gin.Context) {
+	var req req.FollowUnfollowUserReq
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+
+	user := ctx.GetStringMap("user")
+	fmt.Println("User is", user)
+	v, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+	req.UserID = v.(string)
+
+	fmt.Println("Req is", req)
+	resp := h.uc.FollowUser(ctx, &req)
+	ctx.JSON(resp.Code, resp)
+}
+
+func (h *UserHandler) UnfollowUser(ctx *gin.Context) {
+	var req req.FollowUnfollowUserReq
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   err.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+	
+	user := ctx.GetStringMap("user")
+	fmt.Println("User is", user)
+	v, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+	req.UserID = v.(string)
+	
+	fmt.Println("Req is", req)
+	resp := h.uc.UnfollowUser(ctx, &req)
+	ctx.JSON(resp.Code, resp)
+}

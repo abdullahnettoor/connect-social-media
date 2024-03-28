@@ -244,3 +244,35 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 		User:  *user,
 	}
 }
+
+func (uc *UserUseCase) FollowUser(ctx context.Context, req *req.FollowUnfollowUserReq) *res.CommonRes {
+	err := uc.repo.FollowUser(ctx, req.UserID, req.FollowedID)
+	if err != nil {
+		return &res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: "DB Error",
+			Error:   err.Error(),
+		}
+	}
+
+	return &res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "followed user successfully",
+	}
+}
+
+func (uc *UserUseCase) UnfollowUser(ctx context.Context, req *req.FollowUnfollowUserReq) *res.CommonRes {
+	err := uc.repo.UnfollowUser(ctx, req.UserID, req.FollowedID)
+	if err != nil {
+		return &res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: "DB Error",
+			Error:   err.Error(),
+		}
+	}
+
+	return &res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "un followed user successfully",
+	}
+}

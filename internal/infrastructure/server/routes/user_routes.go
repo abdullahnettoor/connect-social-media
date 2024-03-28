@@ -25,4 +25,7 @@ func SetupUserRoutes(
 
 	user.POST("/commentPost", commentHandler.CreateComment)
 	user.DELETE("/deleteComment", commentHandler.DeleteComment)
+
+	user.PATCH("/follow", userHandler.FollowUser)
+	user.PATCH("/unfollow", userHandler.UnfollowUser)
 }

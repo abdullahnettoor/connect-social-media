@@ -184,3 +184,54 @@ func (r *UserRepository) RemoveUserByEmail(ctx context.Context, email string) er
 
 	return nil
 }
+
+func (r *UserRepository) FollowUser(ctx context.Context, userId, followedId string) error {
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `
+	MATCH (n:User{userId:$userId})
+	MATCH (f:User{userId:$followedId})
+	MERGE (n)-[:FOLLOWS]->(f)
+	`
+
+	params := map[string]any{
+		"userId": userId, "followedId": followedId,
+	}
+
+	fmt.Println("Params is", params)
+
+	_, err := session.Run(ctx, cypher, params)
+
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return err
+	}
+	return nil
+}
+
+func (r *UserRepository) UnfollowUser(ctx context.Context, userId, followedId string) error {
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `
+	MATCH (n:User {userId: $userId})
+	MATCH (f:User {userId: $followedId})
+	MATCH (n)-[r:FOLLOWS]->(f)
+	DELETE r
+	`
+
+	params := map[string]any{
+		"userId": userId, "followedId": followedId,
+	}
+
+	fmt.Println("Params is", params)
+
+	_, err := session.Run(ctx, cypher, params)
+
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return err
+	}
+	return nil
+}

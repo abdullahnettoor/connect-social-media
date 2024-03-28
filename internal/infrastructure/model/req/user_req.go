@@ -21,6 +21,11 @@ type LoginReq struct {
 	Password string `json:"password"`
 }
 
+type FollowUnfollowUserReq struct {
+	UserID     string `json:"userId"`
+	FollowedID string `json:"followedId"`
+}
+
 type UserId struct {
 	UserID string `json:"userId"`
 }
