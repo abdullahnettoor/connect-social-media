@@ -8,6 +8,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.4.0
 	github.com/google/wire v0.6.0
+	github.com/gorilla/websocket v1.5.1
 	github.com/neo4j/neo4j-go-driver/v5 v5.18.0
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.21.0

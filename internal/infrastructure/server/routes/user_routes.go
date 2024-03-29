@@ -28,4 +28,7 @@ func SetupUserRoutes(
 
 	user.PATCH("/follow", userHandler.FollowUser)
 	user.PATCH("/unfollow", userHandler.UnfollowUser)
+
+	user.GET("/followers", userHandler.GetFollowers)
+	user.GET("/following", userHandler.GetFollowing)
 }

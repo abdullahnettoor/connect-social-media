@@ -276,3 +276,37 @@ func (uc *UserUseCase) UnfollowUser(ctx context.Context, req *req.FollowUnfollow
 		Message: "un followed user successfully",
 	}
 }
+
+func (uc *UserUseCase) GetFollowers(ctx context.Context, req *req.UserId) *res.UserProfileRes {
+	followers, err := uc.repo.GetFollowers(ctx, req.UserID)
+	if err != nil {
+		return &res.UserProfileRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Error:   err.Error(),
+			Message: "error retrieving followers",
+		}}
+	}
+	return &res.UserProfileRes{CommonRes: res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "get followers successful",
+	},
+		Followers: followers,
+	}
+}
+
+func (uc *UserUseCase) GetFollowing(ctx context.Context, req *req.UserId) *res.UserProfileRes {
+	following, err := uc.repo.GetFollowing(ctx, req.UserID)
+	if err != nil {
+		return &res.UserProfileRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Error:   err.Error(),
+			Message: "error retrieving following list",
+		}}
+	}
+	return &res.UserProfileRes{CommonRes: res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "get following list successful",
+	},
+		Following: following,
+	}
+}

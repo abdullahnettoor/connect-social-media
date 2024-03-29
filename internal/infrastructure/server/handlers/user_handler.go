@@ -134,7 +134,7 @@ func (h *UserHandler) UnfollowUser(ctx *gin.Context) {
 		})
 		return
 	}
-	
+
 	user := ctx.GetStringMap("user")
 	fmt.Println("User is", user)
 	v, ok := user["userId"]
@@ -147,8 +147,48 @@ func (h *UserHandler) UnfollowUser(ctx *gin.Context) {
 		return
 	}
 	req.UserID = v.(string)
-	
+
 	fmt.Println("Req is", req)
 	resp := h.uc.UnfollowUser(ctx, &req)
+	ctx.JSON(resp.Code, resp)
+}
+
+func (h *UserHandler) GetFollowers(ctx *gin.Context) {
+	var req req.UserId
+
+	user := ctx.GetStringMap("user")
+	fmt.Println("User is", user)
+	v, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+	req.UserID = v.(string)
+
+	resp := h.uc.GetFollowers(ctx, &req)
+	ctx.JSON(resp.Code, resp)
+}
+
+func (h *UserHandler) GetFollowing(ctx *gin.Context) {
+	var req req.UserId
+
+	user := ctx.GetStringMap("user")
+	fmt.Println("User is", user)
+	v, ok := user["userId"]
+	if !ok {
+		ctx.JSON(http.StatusBadRequest, res.CommonRes{
+			Code:    http.StatusBadRequest,
+			Error:   e.ErrKeyNotFound.Error(),
+			Message: "Failed to parse request",
+		})
+		return
+	}
+	req.UserID = v.(string)
+
+	resp := h.uc.GetFollowing(ctx, &req)
 	ctx.JSON(resp.Code, resp)
 }

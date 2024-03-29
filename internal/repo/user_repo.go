@@ -235,3 +235,79 @@ func (r *UserRepository) UnfollowUser(ctx context.Context, userId, followedId st
 	}
 	return nil
 }
+
+func (r *UserRepository) GetFollowers(ctx context.Context, userId string) ([]*entity.User, error) {
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `
+	MATCH (n:User {userId: $userId})
+	MATCH (f:User)
+	MATCH (f)-[r:FOLLOWS]->(n)
+	RETURN f.username as username, 
+			f.avatar as avatar, 
+			f.userId as userId
+	`
+
+	params := map[string]any{
+		"userId": userId,
+	}
+
+	result, err := session.Run(ctx, cypher, params)
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return nil, err
+	}
+
+	var followers = make([]*entity.User, 0)
+	for result.Next(ctx) {
+		f := &entity.User{}
+		fmt.Println(result.Record().AsMap())
+		err := conv.MapToStruct(result.Record().AsMap(), &f)
+		if err != nil {
+			log.Println("Error occurred while converting followerMap to follower:", err)
+			return nil, err
+		}
+		followers = append(followers, f)
+	}
+
+	return followers, nil
+}
+
+func (r *UserRepository) GetFollowing(ctx context.Context, userId string) ([]*entity.User, error) {
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `
+	MATCH (n:User {userId: $userId})
+	MATCH (f:User)
+	MATCH (n)-[r:FOLLOWS]->(f)
+	RETURN f.username as username, 
+			f.avatar as avatar, 
+			f.userId as userId
+	`
+
+	params := map[string]any{
+		"userId": userId,
+	}
+
+	result, err := session.Run(ctx, cypher, params)
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return nil, err
+	}
+
+	var following = make([]*entity.User, 0)
+	for result.Next(ctx) {
+		f := &entity.User{}
+		fmt.Println(result.Record().AsMap())
+		err := conv.MapToStruct(result.Record().AsMap(), &f)
+		if err != nil {
+			log.Println("Error occurred while converting followingMap to following:", err)
+			return nil, err
+		}
+		following = append(following, f)
+	}
+
+	return following, nil
+}

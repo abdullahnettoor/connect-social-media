@@ -4,7 +4,7 @@ import "github.com/abdullahnettoor/connect-social-media/internal/domain/entity"
 
 type SignUpRes struct {
 	CommonRes
-	Token   string      `json:"token,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 type LoginRes struct {
@@ -16,3 +16,10 @@ type LoginRes struct {
 type CreatePostRes struct {
 	CommonRes
 }
+
+type UserProfileRes struct {
+	CommonRes
+	Followers []*entity.User `json:"followers,omitempty"`
+	Following []*entity.User `json:"following,omitempty"`
+}
+
