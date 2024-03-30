@@ -48,7 +48,7 @@ func MapToStruct(data map[string]any, result any) error {
 
 	// Unmarshal the JSON byte slice into the struct
 	if err := json.Unmarshal(jsonData, result); err != nil {
-		return fmt.Errorf("error in unmarshal JSON to User struct: %w", err)
+		return fmt.Errorf("error in unmarshal JSON to struct: %w", err)
 	}
 
 	return nil

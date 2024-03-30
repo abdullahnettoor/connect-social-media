@@ -31,4 +31,6 @@ func SetupUserRoutes(
 
 	user.GET("/followers", userHandler.GetFollowers)
 	user.GET("/following", userHandler.GetFollowing)
+
+	user.GET("/posts", postHandler.GetAllPosts)
 }

@@ -100,3 +100,8 @@ func (h *PostHandler) UnlikePost(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusNoContent, h.uc.UnlikePost(ctx, &req))
 }
+
+func (h *PostHandler) GetAllPosts(ctx *gin.Context) {
+	resp := h.uc.GetAllPosts(ctx)
+	ctx.JSON(resp.Code, resp)
+}

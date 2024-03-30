@@ -129,3 +129,20 @@ func (uc *PostUseCase) UnlikePost(ctx context.Context, req *req.LikeUnlikePostRe
 		Message: "Removed like from Post",
 	}
 }
+
+func (uc *PostUseCase) GetAllPosts(ctx context.Context) *res.GetAllPostsRes {
+	posts, err := uc.postRepo.GetAllPost(ctx)
+	if err != nil {
+		return &res.GetAllPostsRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: "Error retrieving posts",
+			Error:   err.Error(),
+		}}
+	}
+
+	return &res.GetAllPostsRes{CommonRes: res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "Fetched All posts"},
+		Post: posts,
+	}
+}

@@ -129,3 +129,55 @@ func (r *PostRepository) UnlikePost(ctx context.Context, userId, postId string) 
 
 	return nil
 }
+
+func (r *PostRepository) GetAllPost(ctx context.Context) ([]*entity.Post, error) {
+	var posts = make([]*entity.Post, 0)
+
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	cypher := `
+	MATCH (user:User)-[:POSTED]->(post:Post)
+	OPTIONAL MATCH (post)<-[:LIKED]-(liker:User)
+	OPTIONAL MATCH (post)<-[:HAS_COMMENT]-(comment:Comment)
+	RETURN user.username AS username,
+		   user.avatar AS avatar,
+		   post,
+		   COUNT(DISTINCT liker) AS likeCount,
+		   COUNT(DISTINCT comment) AS commentCount
+	ORDER BY post.updatedAt DESC	
+	`
+
+	result, err := session.Run(ctx, cypher, nil)
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return nil, err
+	}
+	records, err := result.Collect(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range records {
+		fmt.Println("Record is", r.AsMap())
+
+		var p = &entity.Post{}
+		err := conv.MapToStruct(r.AsMap(), p)
+		if err != nil {
+			log.Print("Error is: ", err)
+			return nil, err
+		}
+		// m, err := conv.StructToMap(r.AsMap()["post"].(dbtype.Node).Props)
+		// if err != nil {
+		// 	log.Print("Error is: ", err)
+		// 	return nil, err
+		// }
+		err = conv.MapToStruct(r.AsMap()["post"].(dbtype.Node).Props, p)
+		if err != nil {
+			log.Print("Error is: ", err)
+			return nil, err
+		}
+		posts = append(posts, p)
+	}
+
+	return posts, nil
+}
