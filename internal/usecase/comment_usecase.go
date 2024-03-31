@@ -63,3 +63,20 @@ func (uc *CommentUseCase) DeleteComment(ctx context.Context, req *req.DeleteComm
 		Message: "Delete Comment Successful",
 	}
 }
+
+func (uc *CommentUseCase) GetCommentsByPostId(ctx context.Context, req *req.GetCommentsReq) *res.GetCommentsRes {
+	comments, err := uc.commentRepo.GetCommentsOfPost(ctx, req.PostID)
+	if err != nil {
+		return &res.GetCommentsRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: "Error retrieving posts",
+			Error:   err.Error(),
+		}}
+	}
+
+	return &res.GetCommentsRes{CommonRes: res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "Fetched All posts"},
+		Comments: comments,
+	}
+}

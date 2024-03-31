@@ -33,4 +33,5 @@ func SetupUserRoutes(
 	user.GET("/following", userHandler.GetFollowing)
 
 	user.GET("/posts", postHandler.GetAllPosts)
+	user.GET("/post/:postId/comments", commentHandler.GetCommentsByPostId)
 }

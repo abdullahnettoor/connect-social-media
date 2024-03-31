@@ -6,4 +6,6 @@ type Comment struct {
 	CreatedAt string `json:"createdAt,omitempty"`
 	PostID    string `json:"postId,omitempty"`
 	UserID    string `json:"userId,omitempty"`
+	Username  string `json:"username,omitempty"`
+	Avatar    string `json:"avatar,omitempty"`
 }

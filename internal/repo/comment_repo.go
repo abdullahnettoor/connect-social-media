@@ -91,3 +91,51 @@ func (r *CommentRepository) Delete(ctx context.Context, userId, commentId string
 
 	return nil
 }
+
+func (r *CommentRepository) GetCommentsOfPost(ctx context.Context, postId string) ([]*entity.Comment, error) {
+
+	session := r.db.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+
+	params := map[string]any{
+		"postId": postId,
+	}
+	cypher := `MATCH 
+	(post:Post {postId: $postId})
+	-[:HAS_COMMENT]-
+	(comment:Comment)
+	-[:WROTE_COMMENT]-
+	(u:User)
+	RETURN comment, u.username as username, u.avatar as avatar
+	`
+
+	result, err := session.Run(ctx, cypher, params)
+	if err != nil {
+		log.Println("Error occurred while Executing cypher:", err)
+		return nil, err
+	}
+	records, err := result.Collect(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var comments []*entity.Comment
+	for _, r := range records {
+		fmt.Println("Record is", r.AsMap())
+
+		var c = &entity.Comment{}
+		err := conv.MapToStruct(r.AsMap(), c)
+		if err != nil {
+			log.Print("Error is: ", err)
+			// return nil, err
+		}
+		err = conv.MapToStruct(r.AsMap()["comment"].(dbtype.Node).Props, c)
+		if err != nil {
+			log.Print("Error is: ", err)
+			return nil, err
+		}
+		comments = append(comments, c)
+	}
+
+	return comments, nil
+}

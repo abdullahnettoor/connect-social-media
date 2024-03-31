@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	e "github.com/abdullahnettoor/connect-social-media/internal/domain/error"
@@ -77,5 +78,15 @@ func (h *CommentHandler) DeleteComment(ctx *gin.Context) {
 
 	resp := h.uc.DeleteComment(ctx, &req)
 
+	ctx.JSON(resp.Code, resp)
+}
+
+func (h *CommentHandler) GetCommentsByPostId(ctx *gin.Context) {
+	var req req.GetCommentsReq
+	req.PostID = ctx.Param("postId")
+
+	fmt.Println("Req is", req)
+
+	resp := h.uc.GetCommentsByPostId(ctx, &req)
 	ctx.JSON(resp.Code, resp)
 }

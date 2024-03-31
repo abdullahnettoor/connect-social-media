@@ -53,6 +53,10 @@ type CreateCommentReq struct {
 	PostID  string `json:"postId"`
 }
 
+type GetCommentsReq struct {
+	PostID  string `json:"postId"`
+}
+
 type DeleteCommentReq struct {
 	UserID    string `json:"userId"`
 	CommentID string `json:"commentId"`

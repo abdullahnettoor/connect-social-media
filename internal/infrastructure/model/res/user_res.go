@@ -23,3 +23,12 @@ type UserProfileRes struct {
 	Following []*entity.User `json:"following,omitempty"`
 }
 
+type GetAllPostsRes struct {
+	CommonRes
+	Post []*entity.Post `json:"posts,omitempty"`
+}
+
+type GetCommentsRes struct {
+	CommonRes
+	Comments []*entity.Comment `json:"comments,omitempty"`
+}
