@@ -138,8 +138,8 @@ func (r *PostRepository) GetAllPost(ctx context.Context) ([]*entity.Post, error)
 
 	cypher := `
 	MATCH (user:User)-[:POSTED]->(post:Post)
+	OPTIONAL MATCH (post)-[:HAS_COMMENT]->(comment:Comment)
 	OPTIONAL MATCH (post)<-[:LIKED]-(liker:User)
-	OPTIONAL MATCH (post)<-[:HAS_COMMENT]-(comment:Comment)
 	RETURN user.username AS username,
 		   user.avatar AS avatar,
 		   post,
