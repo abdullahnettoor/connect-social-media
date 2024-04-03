@@ -33,6 +33,9 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 		repo.NewCommentRepository,
 		usecase.NewCommentUseCase,
 		handlers.NewCommentHandler,
+		repo.NewChatRepository,
+		usecase.NewChatUseCase,
+		handlers.NewChatHandler,
 	)
 
 	return &server.ServeHttp{}, nil

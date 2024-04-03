@@ -23,10 +23,6 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 	if err != nil {
 		return nil, err
 	}
-	cloudinary, err := imgupload.ConnectCloudinary(cfg)
-	if err != nil {
-		return nil, err
-	}
 	userRepository := repo.NewUserRepository(driverWithContext)
 	userUseCase := usecase.NewUserUseCase(userRepository)
 	userHandler := handlers.NewUserHandler(userUseCase)
@@ -34,12 +30,19 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 	adminUseCase := usecase.NewAdminUseCase(adminRepository, userRepository)
 	adminHandler := handlers.NewAdminHandler(adminUseCase)
 	postRepository := repo.NewPostRepository(driverWithContext)
+	cloudinary, err := imgupload.ConnectCloudinary(cfg)
+	if err != nil {
+		return nil, err
+	}
 	contentRepository := repo.NewContentRepository(cloudinary)
 	postUseCase := usecase.NewPostUseCase(postRepository, contentRepository)
 	postHandler := handlers.NewPostHandler(postUseCase)
 	commentRepository := repo.NewCommentRepository(driverWithContext)
 	commentUseCase := usecase.NewCommentUseCase(commentRepository, contentRepository)
 	commentHandler := handlers.NewCommentHandler(commentUseCase)
-	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler, commentHandler)
+	chatRepository := repo.NewChatRepository(driverWithContext)
+	chatUseCase := usecase.NewChatUseCase(chatRepository)
+	chatHandler := handlers.NewChatHandler(chatUseCase)
+	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler, commentHandler,chatHandler)
 	return serveHttp, nil
 }

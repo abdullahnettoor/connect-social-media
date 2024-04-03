@@ -11,6 +11,7 @@ func SetupUserRoutes(
 	userHandler *handlers.UserHandler,
 	postHandler *handlers.PostHandler,
 	commentHandler *handlers.CommentHandler,
+	chatHandler *handlers.ChatHandler,
 ) {
 	engine.POST("/signUp", userHandler.SignUp)
 	engine.POST("/login", userHandler.Login)
@@ -34,4 +35,6 @@ func SetupUserRoutes(
 
 	user.GET("/posts", postHandler.GetAllPosts)
 	user.GET("/post/:postId/comments", commentHandler.GetCommentsByPostId)
+	
+	user.POST("/chat/sendMsg", chatHandler.SendChat)
 }

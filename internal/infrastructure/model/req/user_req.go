@@ -62,6 +62,12 @@ type DeleteCommentReq struct {
 	CommentID string `json:"commentId"`
 }
 
+type SendChatReq struct {
+	SenderID    string `json:"senderId"`
+	RecipientID string `json:"recipientId"`
+	Message string `json:"message"`
+}
+
 // type Post struct {
 // 	ID          int64    `json:"postId,omitempty"`
 // 	Description string   `json:"description,omitempty"`

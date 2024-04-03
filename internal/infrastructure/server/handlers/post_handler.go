@@ -71,7 +71,8 @@ func (h *PostHandler) LikePost(ctx *gin.Context) {
 	}
 	req.UserID = userId.(string)
 
-	ctx.JSON(http.StatusNoContent, h.uc.LikePost(ctx, &req))
+	resp := h.uc.LikePost(ctx, &req)
+	ctx.JSON(resp.Code, resp)
 }
 
 func (h *PostHandler) UnlikePost(ctx *gin.Context) {
@@ -98,7 +99,8 @@ func (h *PostHandler) UnlikePost(ctx *gin.Context) {
 	}
 	req.UserID = userId.(string)
 
-	ctx.JSON(http.StatusNoContent, h.uc.UnlikePost(ctx, &req))
+	resp := h.uc.UnlikePost(ctx, &req)
+	ctx.JSON(resp.Code, resp)
 }
 
 func (h *PostHandler) GetAllPosts(ctx *gin.Context) {
