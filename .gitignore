@@ -1,3 +1,5 @@
 dev.env
+.env
 .idea
 .vscode
+db
