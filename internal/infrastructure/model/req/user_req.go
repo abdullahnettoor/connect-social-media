@@ -54,7 +54,7 @@ type CreateCommentReq struct {
 }
 
 type GetCommentsReq struct {
-	PostID  string `json:"postId"`
+	PostID string `json:"postId"`
 }
 
 type DeleteCommentReq struct {
@@ -65,7 +65,9 @@ type DeleteCommentReq struct {
 type SendChatReq struct {
 	SenderID    string `json:"senderId"`
 	RecipientID string `json:"recipientId"`
-	Message string `json:"message"`
+	Message     string `json:"message"`
+	CreatedAt   string `json:"createdAt"`
+	ReceivedAt  string `json:"receivedAt"`
 }
 
 // type Post struct {
