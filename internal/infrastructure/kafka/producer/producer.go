@@ -6,7 +6,7 @@ import (
 	"github.com/IBM/sarama"
 )
 
-func NewProducer(topic string, data []byte) error {
+func NewProducer(topic, key string, data []byte) error {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.RequiredAcks = sarama.WaitForAll
@@ -23,8 +23,8 @@ func NewProducer(topic string, data []byte) error {
 	// Create a Kafka message
 	message := &sarama.ProducerMessage{
 		Topic: topic,
-		Value: sarama.ByteEncoder(data),
-		// Value: sarama.StringEncoder("Hello, Kafka!"),
+		Key: sarama.StringEncoder(key) ,
+		Value: sarama.StringEncoder(data),
 	}
 
 	// Send the message

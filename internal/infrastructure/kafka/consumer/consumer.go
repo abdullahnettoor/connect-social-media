@@ -10,7 +10,7 @@ import (
 	"github.com/IBM/sarama"
 )
 
-func main() {
+func NewConsumer(topic, key string) {
 	// Create a new Kafka consumer
 	consumer, err := sarama.NewConsumer([]string{"localhost:9092"}, nil)
 	if err != nil {
@@ -18,9 +18,7 @@ func main() {
 	}
 	defer consumer.Close()
 
-	userId := os.Args[1]
 	// Subscribe to the topic
-	topic := userId
 	partitions, err := consumer.Partitions(topic)
 	if err != nil {
 		log.Fatalf("Failed to get partitions for topic '%s': %s", topic, err)
@@ -35,7 +33,7 @@ func main() {
 			defer wg.Done()
 
 			// Create a partition consumer
-			partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetOldest)
+			partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
 			if err != nil {
 				log.Fatalf("Failed to create partition consumer: %s", err)
 			}
@@ -45,7 +43,6 @@ func main() {
 			for message := range partitionConsumer.Messages() {
 				log.Printf("Received message: %s", string(message.Value))
 			}
-
 		}(partition)
 	}
 
@@ -57,6 +54,7 @@ func main() {
 		log.Println("Received interrupt signal. Shutting down...")
 		os.Exit(0)
 	}()
+
 	// Wait for all partition consumers to finish
 	wg.Wait()
 
