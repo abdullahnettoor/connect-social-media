@@ -45,7 +45,7 @@ func (h *ChatHandler) SendChat(ctx *gin.Context) {
 	req.SenderID = userId.(string)
 
 	data, _ := json.Marshal(req)
-	if err := producer.NewProducer(req.RecipientID, data); err != nil {
+	if err := producer.NewProducer("chat", req.RecipientID, data); err != nil {
 		ctx.JSON(http.StatusInternalServerError, res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Error:   err.Error(),
