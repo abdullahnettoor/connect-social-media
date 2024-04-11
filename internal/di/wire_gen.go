@@ -43,6 +43,7 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 	chatRepository := repo.NewChatRepository(driverWithContext)
 	chatUseCase := usecase.NewChatUseCase(chatRepository)
 	chatHandler := handlers.NewChatHandler(chatUseCase)
-	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler, commentHandler,chatHandler)
+	wsHandler := handlers.NewWebsocketHandler(chatUseCase)
+	serveHttp := server.NewServeHttp(userHandler, adminHandler, postHandler, commentHandler,chatHandler,wsHandler)
 	return serveHttp, nil
 }

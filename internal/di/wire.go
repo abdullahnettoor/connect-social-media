@@ -36,6 +36,7 @@ func InitializeAPI(cfg *config.Config) (*server.ServeHttp, error) {
 		repo.NewChatRepository,
 		usecase.NewChatUseCase,
 		handlers.NewChatHandler,
+		handlers.NewWebSocketHandler,
 	)
 
 	return &server.ServeHttp{}, nil
