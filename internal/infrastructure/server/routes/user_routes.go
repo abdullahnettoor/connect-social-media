@@ -12,11 +12,14 @@ func SetupUserRoutes(
 	postHandler *handlers.PostHandler,
 	commentHandler *handlers.CommentHandler,
 	chatHandler *handlers.ChatHandler,
+	wsHandler *handlers.WebSocketConnection,
 ) {
 	engine.POST("/signUp", userHandler.SignUp)
 	engine.POST("/login", userHandler.Login)
 
 	user := engine.Group("/").Use(middlewares.AuthenticateUser)
+	user.GET("/ws", wsHandler.EstablishConnection)
+
 	user.PATCH("/verifyOtp", userHandler.VerifyOtp)
 
 	user.POST("/newPost", postHandler.CreatePost)
@@ -35,6 +38,6 @@ func SetupUserRoutes(
 
 	user.GET("/posts", postHandler.GetAllPosts)
 	user.GET("/post/:postId/comments", commentHandler.GetCommentsByPostId)
-	
-	user.POST("/chat/sendMsg", chatHandler.SendChat)
+
+	// user.GET("/chat", chatHandler.SendChat)
 }
