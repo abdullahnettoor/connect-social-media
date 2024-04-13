@@ -16,15 +16,16 @@ func NewServeHttp(
 	postHandler *handlers.PostHandler,
 	commentHandler *handlers.CommentHandler,
 	chatHandler *handlers.ChatHandler,
+	wsHandler *handlers.WebSocketConnection,
 ) *ServeHttp {
 	server := gin.New()
-	server.Use(gin.Logger())
+	server.Use(gin.LoggerWithConfig(gin.LoggerConfig{SkipPaths: []string{"/browser"}}))
 
 	server.GET("/check", func(ctx *gin.Context) {
 		ctx.String(200, "Server Health OK")
 	})
 
-	routes.SetupUserRoutes(server, userHandler, postHandler, commentHandler, chatHandler)
+	routes.SetupUserRoutes(server, userHandler, postHandler, commentHandler, chatHandler, wsHandler)
 	routes.SetupAdminRoutes(server, adminHandler)
 
 	return &ServeHttp{server}
