@@ -21,8 +21,8 @@ func NewServeHttp(
 	server := gin.New()
 	server.Use(gin.LoggerWithConfig(gin.LoggerConfig{SkipPaths: []string{"/browser"}}))
 
-	server.GET("/check", func(ctx *gin.Context) {
-		ctx.String(200, "Server Health OK")
+	server.GET("/", func(ctx *gin.Context) {
+		ctx.String(200, "Connectr Server is Running")
 	})
 
 	routes.SetupUserRoutes(server, userHandler, postHandler, commentHandler, chatHandler, wsHandler)
