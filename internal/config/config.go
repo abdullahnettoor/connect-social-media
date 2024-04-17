@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	DbUri      string `mapstructure:"NEO4J_URI"`
-	DbUsername string `mapstructure:"NEO4J_USERNAME"`
-	DbPassword string `mapstructure:"NEO4J_PASSWORD"`
+	DbUri          string `mapstructure:"NEO4J_URI"`
+	DbContainerUri string `mapstructure:"NEO4J_CONTAINER_URI"`
+	DbUsername     string `mapstructure:"NEO4J_USERNAME"`
+	DbPassword     string `mapstructure:"NEO4J_PASSWORD"`
 
 	ContentCloudUri string `mapstructure:"IMG_CLOUD_URL"`
 }
