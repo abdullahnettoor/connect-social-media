@@ -10,14 +10,24 @@ import (
 
 func ConnectDb(cfg *config.Config) (neo4j.DriverWithContext, error) {
 	driver, err := neo4j.NewDriverWithContext(
+		// Try connecting with localhost
 		cfg.DbUri,
 		neo4j.BasicAuth(cfg.DbUsername, cfg.DbPassword, ""),
 	)
+
+	if neo4j.IsConnectivityError(err) {
+		// Try connecting to containerized db
+		driver, err = neo4j.NewDriverWithContext(
+			cfg.DbContainerUri,
+			neo4j.BasicAuth(cfg.DbUsername, cfg.DbPassword, ""),
+		)
+	}
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
+
 	// defer driver.Close(context.Background())
 
 	err = driver.VerifyConnectivity(context.Background())
