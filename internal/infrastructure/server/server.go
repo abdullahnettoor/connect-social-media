@@ -32,5 +32,5 @@ func NewServeHttp(
 }
 
 func (s *ServeHttp) Start() {
-	s.server.Run("127.0.0.1:9000")
+	s.server.Run(":9000")
 }
