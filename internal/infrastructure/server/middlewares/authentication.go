@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/abdullahnettoor/connect-social-media/internal/infrastructure/model/res"
 	jwttoken "github.com/abdullahnettoor/connect-social-media/pkg/jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -54,6 +55,23 @@ func AuthenticateUser(ctx *gin.Context) {
 	if role != "user" {
 		ctx.AbortWithStatus(http.StatusForbidden)
 		return
+	}
+	v, ok := user["status"].(string)
+	if ok {
+		switch v {
+		case "PENDING":
+			ctx.JSON(http.StatusForbidden, res.CommonRes{
+				Code:    http.StatusForbidden,
+				Message: "Verify OTP to Login",
+			})
+			return
+		case "BLOCKED":
+			ctx.JSON(http.StatusForbidden, res.CommonRes{
+				Code:    http.StatusForbidden,
+				Message: "Your profile is blocked",
+			})
+			return
+		}
 	}
 
 	ctx.Set("user", user)
