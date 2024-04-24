@@ -38,6 +38,4 @@ func SetupUserRoutes(
 
 	user.GET("/posts", postHandler.GetAllPosts)
 	user.GET("/post/:postId/comments", commentHandler.GetCommentsByPostId)
-
-	// user.GET("/chat", chatHandler.SendChat)
 }
