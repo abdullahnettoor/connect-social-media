@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -110,6 +111,8 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 		}
 	}
 
+	fmt.Println("--- Otp is:", otp)
+
 	return &res.SignUpRes{
 		CommonRes: res.CommonRes{
 			Code:    http.StatusOK,
@@ -197,6 +200,20 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 
 	switch {
 	case err == e.ErrUserNotFound:
+		return &res.LoginRes{CommonRes: res.CommonRes{
+			Code:    http.StatusNotFound,
+			Message: "User not found",
+			Error:   err.Error(),
+		},
+		}
+	case user.Status != constants.UserStatusPending:
+		return &res.LoginRes{CommonRes: res.CommonRes{
+			Code:    http.StatusNotFound,
+			Message: "User not found",
+			Error:   err.Error(),
+		},
+		}
+	case user.Status != constants.UserStatusBlocked:
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusNotFound,
 			Message: "User not found",
