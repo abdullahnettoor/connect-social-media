@@ -34,12 +34,10 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 	if err != nil {
 		msg := "Error Occurred while hashing password"
 		log.Println(msg)
-		return &res.SignUpRes{
-			CommonRes: res.CommonRes{
-				Code:    http.StatusInternalServerError,
-				Message: msg,
-				Error:   err.Error(),
-			},
+		return &res.SignUpRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: msg,
+			Error:   err.Error()},
 		}
 	}
 
@@ -64,17 +62,14 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 			CommonRes: res.CommonRes{
 				Code:    http.StatusConflict,
 				Message: "User already exist",
-				Error:   err.Error(),
-			},
+				Error:   err.Error()},
 		}
 	}
 	if err != nil {
-		return &res.SignUpRes{
-			CommonRes: res.CommonRes{
-				Code:    http.StatusInternalServerError,
-				Message: "server error",
-				Error:   err.Error(),
-			},
+		return &res.SignUpRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: "server error",
+			Error:   err.Error()},
 		}
 	}
 
@@ -90,34 +85,29 @@ func (uc *UserUseCase) SignUp(ctx context.Context, req *req.SignUpReq) *res.Sign
 		uc.repo.RemoveUserByEmail(ctx, req.Email)
 		msg := "Error Occurred while sending otp"
 		log.Println(msg)
-		return &res.SignUpRes{
-			CommonRes: res.CommonRes{
-				Code:    http.StatusInternalServerError,
-				Message: msg,
-				Error:   err.Error(),
-			},
+		return &res.SignUpRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: msg,
+			Error:   err.Error()},
 		}
 	}
 
 	token, err := jwttoken.CreateToken(viper.GetString("JWT_SECRET"), "user", time.Hour*24, user)
 	if err != nil {
 		uc.repo.RemoveUserByEmail(ctx, req.Email)
-		return &res.SignUpRes{
-			CommonRes: res.CommonRes{
-				Code:    http.StatusInternalServerError,
-				Message: "failed to generate token",
-				Error:   err.Error(),
-			},
+		return &res.SignUpRes{CommonRes: res.CommonRes{
+			Code:    http.StatusInternalServerError,
+			Message: "failed to generate token",
+			Error:   err.Error()},
 		}
 	}
 
 	fmt.Println("--- Otp is:", otp)
 
-	return &res.SignUpRes{
-		CommonRes: res.CommonRes{
-			Code:    http.StatusOK,
-			Message: "Verify OTP in your email",
-		}, Token: token,
+	return &res.SignUpRes{CommonRes: res.CommonRes{
+		Code:    http.StatusOK,
+		Message: "Verify OTP in your email"},
+		Token: token,
 	}
 }
 
@@ -203,29 +193,25 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusNotFound,
 			Message: "User not found",
-			Error:   err.Error(),
-		},
+			Error:   err.Error()},
 		}
 	case user.Status != constants.UserStatusPending:
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusNotFound,
 			Message: "User not found",
-			Error:   err.Error(),
-		},
+			Error:   err.Error()},
 		}
 	case user.Status != constants.UserStatusBlocked:
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusNotFound,
 			Message: "User not found",
-			Error:   err.Error(),
-		},
+			Error:   err.Error()},
 		}
 	case err != nil:
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "server error",
-			Error:   err.Error(),
-		},
+			Error:   err.Error()},
 		}
 	}
 
@@ -233,8 +219,7 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusUnauthorized,
 			Message: "Invalid Password",
-			Error:   err.Error(),
-		},
+			Error:   err.Error()},
 		}
 	}
 	user.Password = ""
@@ -248,15 +233,13 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "failed to generate token",
-			Error:   err.Error(),
-		},
+			Error:   err.Error()},
 		}
 	}
 
 	return &res.LoginRes{CommonRes: res.CommonRes{
 		Code:    http.StatusOK,
-		Message: "User logged in successfully",
-	},
+		Message: "User logged in successfully"},
 		Token: token,
 		User:  *user,
 	}
@@ -300,13 +283,12 @@ func (uc *UserUseCase) GetFollowers(ctx context.Context, req *req.UserId) *res.U
 		return &res.UserProfileRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Error:   err.Error(),
-			Message: "error retrieving followers",
-		}}
+			Message: "error retrieving followers"},
+		}
 	}
 	return &res.UserProfileRes{CommonRes: res.CommonRes{
 		Code:    http.StatusOK,
-		Message: "get followers successful",
-	},
+		Message: "get followers successful"},
 		Followers: followers,
 	}
 }
@@ -317,13 +299,12 @@ func (uc *UserUseCase) GetFollowing(ctx context.Context, req *req.UserId) *res.U
 		return &res.UserProfileRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Error:   err.Error(),
-			Message: "error retrieving following list",
-		}}
+			Message: "error retrieving following list"},
+		}
 	}
 	return &res.UserProfileRes{CommonRes: res.CommonRes{
 		Code:    http.StatusOK,
-		Message: "get following list successful",
-	},
+		Message: "get following list successful"},
 		Following: following,
 	}
 }
