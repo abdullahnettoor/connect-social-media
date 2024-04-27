@@ -84,7 +84,12 @@ func (uc *AdminUseCase) GetUser(ctx context.Context, req *req.UserId) *res.Commo
 }
 
 func (uc *AdminUseCase) BlockUser(ctx context.Context, req *req.UserId) *res.CommonRes {
-	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, string(constants.UserStatusBlocked), helper.CurrentIsoDateTimeString())
+	user, err := uc.userRepo.UpdateUserStatus(
+		ctx,
+		req.UserID,
+		string(constants.UserStatusBlocked),
+		helper.CurrentIsoDateTimeString(),
+	)
 	if err != nil {
 		return &res.CommonRes{
 			Code:    http.StatusInternalServerError,
@@ -100,7 +105,12 @@ func (uc *AdminUseCase) BlockUser(ctx context.Context, req *req.UserId) *res.Com
 }
 
 func (uc *AdminUseCase) UnblockUser(ctx context.Context, req *req.UserId) *res.CommonRes {
-	user, err := uc.userRepo.UpdateUserStatus(ctx, req.UserID, string(constants.UserStatusActive), helper.CurrentIsoDateTimeString())
+	user, err := uc.userRepo.UpdateUserStatus(
+		ctx,
+		req.UserID,
+		string(constants.UserStatusActive),
+		helper.CurrentIsoDateTimeString(),
+	)
 	if err != nil {
 		return &res.CommonRes{
 			Code:    http.StatusInternalServerError,
