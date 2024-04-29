@@ -16,7 +16,7 @@ type UserRepository struct {
 	db neo4j.DriverWithContext
 }
 
-func NewUserRepository(driver neo4j.DriverWithContext) *UserRepository {
+func NewUserRepository(driver neo4j.DriverWithContext) UserRepositoryInterface {
 	return &UserRepository{db: driver}
 }
 

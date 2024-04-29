@@ -17,10 +17,10 @@ import (
 
 type AdminUseCase struct {
 	repo     *repo.AdminRepository
-	userRepo *repo.UserRepository
+	userRepo repo.UserRepositoryInterface
 }
 
-func NewAdminUseCase(repo *repo.AdminRepository, userRepo *repo.UserRepository) *AdminUseCase {
+func NewAdminUseCase(repo *repo.AdminRepository, userRepo repo.UserRepositoryInterface) *AdminUseCase {
 	return &AdminUseCase{repo, userRepo}
 }
 

@@ -21,10 +21,10 @@ import (
 )
 
 type UserUseCase struct {
-	repo *repo.UserRepository
+	repo repo.UserRepositoryInterface
 }
 
-func NewUserUseCase(repo *repo.UserRepository) *UserUseCase {
+func NewUserUseCase(repo repo.UserRepositoryInterface) *UserUseCase {
 	return &UserUseCase{repo}
 }
 
