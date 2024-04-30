@@ -15,7 +15,7 @@ type ChatRepository struct {
 	db neo4j.DriverWithContext
 }
 
-func NewChatRepository(db neo4j.DriverWithContext) *ChatRepository {
+func NewChatRepository(db neo4j.DriverWithContext) ChatRepositoryInterface {
 	return &ChatRepository{db}
 }
 

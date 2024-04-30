@@ -14,10 +14,10 @@ import (
 )
 
 type ChatUseCase struct {
-	chatRepo *repo.ChatRepository
+	chatRepo repo.ChatRepositoryInterface
 }
 
-func NewChatUseCase(chatRepo *repo.ChatRepository) *ChatUseCase {
+func NewChatUseCase(chatRepo repo.ChatRepositoryInterface) *ChatUseCase {
 	return &ChatUseCase{chatRepo}
 }
 

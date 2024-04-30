@@ -17,3 +17,7 @@ type UserRepositoryInterface interface {
 	UnfollowUser(ctx context.Context, userId string, followedId string) error
 	UpdateUserStatus(ctx context.Context, id string, status string, updatedAt string) (*entity.User, error)
 }
+
+type ChatRepositoryInterface interface {
+	CreateMessage(ctx context.Context, message *entity.Message) (*entity.Message, error)
+}
