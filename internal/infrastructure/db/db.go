@@ -28,21 +28,23 @@ func ConnectDb(cfg *config.Config) (neo4j.DriverWithContext, error) {
 	}
 
 	// Try connecting to containerized db
-	log.Println("NEO4J: Trying to connect with CONTAINER")
-	driver, err = neo4j.NewDriverWithContext(
-		cfg.DbContainerUri,
-		neo4j.BasicAuth(cfg.DbUsername, cfg.DbPassword, ""),
-	)
-	if err != nil {
-		log.Println("NEO4J:", err.Error())
-		return nil, err
-	}
+	if neo4j.IsConnectivityError(err) {
+		log.Println("NEO4J: Trying to connect with CONTAINER")
+		driver, err = neo4j.NewDriverWithContext(
+			cfg.DbContainerUri,
+			neo4j.BasicAuth(cfg.DbUsername, cfg.DbPassword, ""),
+		)
+		if err != nil {
+			log.Println("NEO4J:", err.Error())
+			return nil, err
+		}
 
-	log.Println("NEO4J: Verifying Connectivity")
-	err = driver.VerifyConnectivity(context.Background())
-	if err != nil {
-		log.Println("NEO4J:", err.Error())
-		return nil, err
+		log.Println("NEO4J: Verifying Connectivity")
+		err = driver.VerifyConnectivity(context.Background())
+		if err != nil {
+			log.Println("NEO4J:", err.Error())
+			return nil, err
+		}
 	}
 
 	log.Println("NEO4J: Connection Established")
