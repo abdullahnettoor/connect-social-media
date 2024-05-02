@@ -195,23 +195,26 @@ func (uc *UserUseCase) Login(ctx context.Context, req *req.LoginReq) *res.LoginR
 			Message: "User not found",
 			Error:   err.Error()},
 		}
-	case user.Status != constants.UserStatusPending:
-		return &res.LoginRes{CommonRes: res.CommonRes{
-			Code:    http.StatusNotFound,
-			Message: "User not found",
-			Error:   err.Error()},
-		}
-	case user.Status != constants.UserStatusBlocked:
-		return &res.LoginRes{CommonRes: res.CommonRes{
-			Code:    http.StatusNotFound,
-			Message: "User not found",
-			Error:   err.Error()},
-		}
 	case err != nil:
 		return &res.LoginRes{CommonRes: res.CommonRes{
 			Code:    http.StatusInternalServerError,
 			Message: "server error",
 			Error:   err.Error()},
+		}
+	case user.Status == constants.UserStatusPending:
+		return &res.LoginRes{CommonRes: res.CommonRes{
+			Code:    http.StatusUnauthorized,
+			Message: "Verify your account to login"},
+		}
+	case user.Status == constants.UserStatusBlocked:
+		return &res.LoginRes{CommonRes: res.CommonRes{
+			Code:    http.StatusUnauthorized,
+			Message: "User Account is Blocked"},
+		}
+	case user.Status != constants.UserStatusActive:
+		return &res.LoginRes{CommonRes: res.CommonRes{
+			Code:    http.StatusUnauthorized,
+			Message: "Verify your account to login"},
 		}
 	}
 
