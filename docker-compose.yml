@@ -1,8 +1,6 @@
 name: "connectr-backend"
 
-volumes:
-  vol: 
-  
+
 services:
 
   # Neo4j Database
