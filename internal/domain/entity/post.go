@@ -14,6 +14,3 @@ type Post struct {
 	Avatar       string   `json:"avatar,omitempty"`
 }
 
-// User 		User     `json:"user,omitempty"`
-// Likes       []*User    `json:"likes,omitempty"`
-// Comments    []*Comment `json:"comments,omitempty"`

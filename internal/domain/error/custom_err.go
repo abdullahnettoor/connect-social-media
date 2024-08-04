@@ -16,12 +16,4 @@ var (
 	ErrKeyNotFound = errors.New("given key not found in map")
 
 	ErrNoRecordsAffected = errors.New("no records were affected")
-	// ErrDb                       = errors.New("db error")
-	// ErrInvalidPassword          = errors.New("invalid password")
-	// ErrInvalidStatusValue       = errors.New("invalid status value")
-	// ErrNotAvailable             = errors.New("not available")
-	// ErrQuantityExceeds          = errors.New("selected quantity not available")
-	// ErrInvalidCoupon            = errors.New("invalid coupon")
-	// ErrCouponNotApplicable      = errors.New("coupon doesn't meet terms")
-	// ErrCouponAlreadyRedeemed    = errors.New("coupon already redeemed")
 )
