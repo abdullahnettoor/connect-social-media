@@ -7,16 +7,16 @@ services:
   db:
     image: neo4j:5.21.2-community-bullseye
     restart: always
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     container_name: neo4j
     ports:
       - "7474:7474"
       - "7687:7687"
     volumes:
       - ./db:/data
-      - vol:/var/lib/db/logs
-      - vol:/var/lib/db/config
+      # - vol:/var/lib/db/logs
+      # - vol:/var/lib/db/config
     # Simple check testing whether the port 7474 is opened.
     # If so, the instance running inside the container is considered as "healthy".
     healthcheck:
